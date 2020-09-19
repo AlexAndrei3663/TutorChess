@@ -1,4 +1,4 @@
 # Byte-compiled / optimized / DLL files
-__pycache__/
+chessGame/__pycache__/
 *.py[cod]
 *$py.class
