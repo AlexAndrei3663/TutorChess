@@ -1,9 +1,9 @@
-import Board
-import Position
+import ChessMatch
+import UI
 
 def main():
-    tabuleiro = Board.Board(8, 8)
-    print(tabuleiro.is_there_a_piece(Position.Position(0, 0)))
+    tabuleiro = ChessMatch.ChessMatch()
+    UI.UI.print_board(tabuleiro.pieces())
 
 if __name__ == "__main__":
     main()
