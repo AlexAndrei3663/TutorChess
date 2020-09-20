@@ -25,6 +25,6 @@ class Position:
     def column(self, column):
         self.__column = column
 
-    #  Sobrecarga toString
+    # Sobrecarga toString
     def __str__(self):
         return f'{self.__row}, {self.__column}'

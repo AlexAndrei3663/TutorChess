@@ -5,7 +5,7 @@ import Piece
 class ChessPiece(Piece.Piece, ABC):
     
     def __init__(self, board, color):
-        super(board)
+        super().__init__(board)
         self.__color = color
         self.__move_count = 0
 
