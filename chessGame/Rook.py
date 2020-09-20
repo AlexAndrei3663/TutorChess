@@ -1,4 +1,5 @@
 import ChessPiece
+import Position
 
 class Rook(ChessPiece.ChessPiece):
 
@@ -13,6 +14,38 @@ class Rook(ChessPiece.ChessPiece):
 
     # Sobrecarga possible_moves
     def possible_moves(self):
-        # mat = [[None]*self.board.columns]*self.board.rows
-        mat = []
+        mat = [[False]*8, [False]*8, [False]*8, [False]*8, [False]*8, [False]*8, [False]*8, [False]*8]
+
+        # # Movimentos pra cima
+        p = Position.Position(self._position.row - 1, self._position.column)
+        while self.board.is_position_exists(p.row, p.column) and not self.board.is_there_a_piece(p):
+            mat[p.row][p.column] = True
+            p.row -= 1
+        if self.board.is_position_exists(p.row, p.column) and self._is_there_opponent_piece(p):
+            mat[p.row][p.column] = True
+
+        # Movimentos pra baixo
+        p = Position.Position(self._position.row + 1, self._position.column)
+        while self.board.is_position_exists(p.row, p.column) and not self.board.is_there_a_piece(p):
+            mat[p.row][p.column] = True
+            p.row += 1
+        if self.board.is_position_exists(p.row, p.column) and self._is_there_opponent_piece(p):
+            mat[p.row][p.column] = True
+
+        # # Movimentos pra direita
+        p = Position.Position(self._position.row, self._position.column + 1)
+        while self.board.is_position_exists(p.row, p.column) and not self.board.is_there_a_piece(p):
+            mat[p.row][p.column] = True
+            p.column += 1
+        if self.board.is_position_exists(p.row, p.column) and self._is_there_opponent_piece(p):
+            mat[p.row][p.column] = True
+
+        # # Movimentos pra esquerda
+        p = Position.Position(self._position.row, self._position.column - 1)
+        while self.board.is_position_exists(p.row, p.column) and not self.board.is_there_a_piece(p):
+            mat[p.row][p.column] = True
+            p.column -= 1
+        if self.board.is_position_exists(p.row, p.column) and self._is_there_opponent_piece(p):
+            mat[p.row][p.column] = True
+
         return mat

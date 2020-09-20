@@ -10,6 +10,7 @@ def main():
             UI.print_board(tabuleiro.pieces())
             print()
             source = UI.read_chess_position('Source: ')
+            # mat = tabuleiro.possible_move(source)
             print()
             target = UI.read_chess_position('Target: ')
 
@@ -17,6 +18,8 @@ def main():
             print(captured_piece)
 
         except ChessException as e:
+            print(e)
+        except ValueError as e:
             print(e)
 
 

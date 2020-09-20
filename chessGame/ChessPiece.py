@@ -19,6 +19,10 @@ class ChessPiece(Piece.Piece, ABC):
     def move_count(self):
         return self.__move_count
 
+    def _is_there_opponent_piece(self, position):
+        p = self.board.piece(position.row, position.column)
+        return (p is not None) and (p.color is not self.__color)
+
     # Aumenta um no contador
     def increase_move_count(self):
         self.__move_count += 1
