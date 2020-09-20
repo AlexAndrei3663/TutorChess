@@ -1,11 +1,11 @@
+from ChessException import ChessException
 import Position
 
 class ChessPosition:
 
     def __init__(self, column, row):
-        if (row < 1 or row > 8) and (column < 'a' or column > 'h'):
-            print('Posição invalida, apenas a1 até h8')
-            return
+        if (row < 1 or row > 8) or (column < 'a' or column > 'h'):
+            raise ChessException(f'Posição {column}{row} invalida, apenas a1 até h8')
         self.__row = row
         self.__column = column
 
