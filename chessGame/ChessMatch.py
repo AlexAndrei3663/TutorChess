@@ -25,9 +25,24 @@ class ChessMatch:
 
     # Setup inicial do tabuleiro
     def initial_setup(self):
-        self.__place_new_piece('a', 1, Rook.Rook(self.__board, True))
+        self.__place_new_piece('f', 3, Rook.Rook(self.__board, True))
         self.__place_new_piece('f', 5, King.King(self.__board, False))
 
     # Função para posicionar nova peça ja convertendo char/int pra int/int
     def __place_new_piece(self, column, row, piece):
         self.__board.place_piece(piece, ChessPosition.ChessPosition(column, row)._to_position())
+
+    # Função que retorna a peça capturada pelo movimento
+    def perform_chess_move(self, source_position, target_position):
+        source = source_position._to_position()
+        target = target_position._to_position()
+        # função pra validar
+        captured_piece = self.__make_move(source, target)
+        return captured_piece
+
+    # Função responsável pela movimentação
+    def __make_move(self, source, target):
+        p = self.__board.remove_piece(source)
+        captured_piece = self.__board.remove_piece(target)
+        self.__board.place_piece(p, target)
+        return captured_piece

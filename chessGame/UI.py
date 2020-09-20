@@ -1,3 +1,5 @@
+import ChessPosition
+
 class UI:
 
     # Printa o Tabuleiro
@@ -18,3 +20,8 @@ class UI:
         else:
             print(piece, end='')
         print(' ', end='')
+
+    @staticmethod
+    def read_chess_position(message):
+        position = str(input(message))
+        return ChessPosition.ChessPosition(position[0], int(position[1]))
