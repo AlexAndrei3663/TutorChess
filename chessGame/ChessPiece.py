@@ -21,7 +21,7 @@ class ChessPiece(Piece.Piece, ABC):
 
     def _is_there_opponent_piece(self, position):
         p = self.board.piece(position.row, position.column)
-        return (p is not None) and (p.color is not self.__color)
+        return (p != None) and (p.color != self.__color)
 
     # Aumenta um no contador
     def increase_move_count(self):

@@ -34,7 +34,7 @@ class Board:
     def is_there_a_piece(self, position):
         if not self.is_position_exists(position.row, position.column):
             raise BoardException('Posição inexistente')
-        return self.piece(position.row, position.column) is not None
+        return self.piece(position.row, position.column) != None
 
     # Adiciona peça ao tabuleiro
     def place_piece(self, piece, position):
@@ -47,7 +47,7 @@ class Board:
     def remove_piece(self, position):
         if not self.is_position_exists(position.row, position.column):
             raise BoardException('Posição inexistente')
-        if self.piece(position.row, position.column) is None:
+        if self.piece(position.row, position.column) == None:
             return None
         aux = self.piece(position.row, position.column)
         aux._position = None

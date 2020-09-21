@@ -2,6 +2,14 @@ import ChessPosition
 
 class UI:
 
+    # Printa o estado incial da partida (por rodada)
+    @staticmethod
+    def print_match(chess_match):
+        UI.print_board(chess_match.pieces())
+        print()
+        print(f'Turn: {chess_match.turn}')
+        print(f'Esperando Jogador: {chess_match.current_player}')
+
     # Printa o Tabuleiro
     @staticmethod
     def print_board(pieces):
@@ -25,7 +33,7 @@ class UI:
     # Printa a peça
     @staticmethod
     def print_piece(piece, possible_move):
-        if piece is None:
+        if piece == None:
             if possible_move:
                 print('.', end='')
             else:

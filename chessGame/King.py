@@ -8,14 +8,14 @@ class King(ChessPiece.ChessPiece):
 
     # Sobrecarga toString
     def __str__(self):
-        if self.color:
+        if self.color == 'WHITE':
             return 'k'
         return 'K'
 
     # Checa se é possível se movimentar
     def __can_move(self, position):
         p = self.board.piece(position.row, position.column)
-        return p is None or p.color is not self.color
+        return p == None or p.color != self.color
 
     # Sobrecarga possible_moves
     def possible_moves(self):

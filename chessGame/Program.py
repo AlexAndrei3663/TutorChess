@@ -7,7 +7,7 @@ def main():
 
     while True:
         try:
-            UI.print_board(tabuleiro.pieces())
+            UI.print_match(tabuleiro)
             print()
             source = UI.read_chess_position('Source: ')
             mat = tabuleiro.possible_move(source)

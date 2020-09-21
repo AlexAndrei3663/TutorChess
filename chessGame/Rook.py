@@ -8,7 +8,7 @@ class Rook(ChessPiece.ChessPiece):
 
     # Sobrecarga toString
     def __str__(self):
-        if self.color:
+        if self.color == 'WHITE':
             return 'r'
         return 'R'
 
