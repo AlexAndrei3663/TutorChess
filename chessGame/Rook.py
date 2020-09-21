@@ -16,7 +16,7 @@ class Rook(ChessPiece.ChessPiece):
     def possible_moves(self):
         mat = [[False]*8, [False]*8, [False]*8, [False]*8, [False]*8, [False]*8, [False]*8, [False]*8]
 
-        # # Movimentos pra cima
+        # Movimentos pra cima
         p = Position.Position(self._position.row - 1, self._position.column)
         while self.board.is_position_exists(p.row, p.column) and not self.board.is_there_a_piece(p):
             mat[p.row][p.column] = True
@@ -32,7 +32,7 @@ class Rook(ChessPiece.ChessPiece):
         if self.board.is_position_exists(p.row, p.column) and self._is_there_opponent_piece(p):
             mat[p.row][p.column] = True
 
-        # # Movimentos pra direita
+        # Movimentos pra direita
         p = Position.Position(self._position.row, self._position.column + 1)
         while self.board.is_position_exists(p.row, p.column) and not self.board.is_there_a_piece(p):
             mat[p.row][p.column] = True
@@ -40,7 +40,7 @@ class Rook(ChessPiece.ChessPiece):
         if self.board.is_position_exists(p.row, p.column) and self._is_there_opponent_piece(p):
             mat[p.row][p.column] = True
 
-        # # Movimentos pra esquerda
+        # Movimentos pra esquerda
         p = Position.Position(self._position.row, self._position.column - 1)
         while self.board.is_position_exists(p.row, p.column) and not self.board.is_there_a_piece(p):
             mat[p.row][p.column] = True

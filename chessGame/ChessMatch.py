@@ -13,21 +13,20 @@ class ChessMatch:
 
     # Retorna a matriz com as peças
     def pieces(self):
-        # mat = [[None]*self.__board.columns]*self.__board.rows
         mat = []
 
         for i in range(self.__board.columns):
             row = []
             for j in range(self.__board.columns):
                 row.append(self.__board.piece(i, j))
-                # mat[i][j] = self.__board.piece(i, j)
             mat.append(row)
         return mat
 
     # Setup inicial do tabuleiro
     def initial_setup(self):
-        self.__place_new_piece('f', 3, Rook.Rook(self.__board, True))
-        self.__place_new_piece('f', 5, King.King(self.__board, False))
+        self.__place_new_piece('h', 1, Rook.Rook(self.__board, True))
+        self.__place_new_piece('a', 1, Rook.Rook(self.__board, True))
+        self.__place_new_piece('f', 3, King.King(self.__board, False))
 
     # Retorna Matriz de movimentos possíveis
     def possible_move(self, source):
