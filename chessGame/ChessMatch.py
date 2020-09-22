@@ -4,6 +4,7 @@ import Board
 import ChessPosition
 import Rook
 import King
+import Pawn
 
 # Tabuleiro visível ao jogador
 class ChessMatch:
@@ -48,15 +49,6 @@ class ChessMatch:
                 row.append(self.__board.piece(i, j))
             mat.append(row)
         return mat
-
-    # Setup inicial do tabuleiro
-    def initial_setup(self):
-        self.__place_new_piece('h', 7, Rook.Rook(self.__board, 'WHITE'))
-        self.__place_new_piece('d', 1, Rook.Rook(self.__board, 'WHITE'))
-        self.__place_new_piece('e', 1, King.King(self.__board, 'WHITE'))
-
-        self.__place_new_piece('b', 8, Rook.Rook(self.__board, 'BLACK'))
-        self.__place_new_piece('a', 8, King.King(self.__board, 'BLACK'))
 
     # Retorna Matriz de movimentos possíveis
     def possible_move(self, source):
@@ -107,6 +99,7 @@ class ChessMatch:
     # Função responsável pela movimentação
     def __make_move(self, source, target):
         p = self.__board.remove_piece(source)
+        p.increase_move_count()
         captured_piece = self.__board.remove_piece(target)
         self.__board.place_piece(p, target)
 
@@ -119,6 +112,7 @@ class ChessMatch:
     #  Função responsável por retornar o movimento
     def __undo_move(self, source, target, captured_piece):
         p = self.__board.remove_piece(target)
+        p.increase_move_count()
         self.__board.place_piece(p, source)
 
         if captured_piece != None:
@@ -170,3 +164,29 @@ class ChessMatch:
                             if not test_check:
                                 return False
         return True
+
+    # Setup inicial do tabuleiro
+    def initial_setup(self):
+        self.__place_new_piece('a', 2, Pawn.Pawn(self.__board, 'WHITE'))
+        self.__place_new_piece('b', 2, Pawn.Pawn(self.__board, 'WHITE'))
+        self.__place_new_piece('c', 2, Pawn.Pawn(self.__board, 'WHITE'))
+        self.__place_new_piece('d', 2, Pawn.Pawn(self.__board, 'WHITE'))
+        self.__place_new_piece('e', 2, Pawn.Pawn(self.__board, 'WHITE'))
+        self.__place_new_piece('f', 2, Pawn.Pawn(self.__board, 'WHITE'))
+        self.__place_new_piece('g', 2, Pawn.Pawn(self.__board, 'WHITE'))
+        self.__place_new_piece('h', 2, Pawn.Pawn(self.__board, 'WHITE'))
+        self.__place_new_piece('a', 1, Rook.Rook(self.__board, 'WHITE'))
+        self.__place_new_piece('h', 1, Rook.Rook(self.__board, 'WHITE'))
+        self.__place_new_piece('e', 1, King.King(self.__board, 'WHITE'))
+
+        self.__place_new_piece('a', 7, Pawn.Pawn(self.__board, 'BLACK'))
+        self.__place_new_piece('b', 7, Pawn.Pawn(self.__board, 'BLACK'))
+        self.__place_new_piece('c', 7, Pawn.Pawn(self.__board, 'BLACK'))
+        self.__place_new_piece('d', 7, Pawn.Pawn(self.__board, 'BLACK'))
+        self.__place_new_piece('e', 7, Pawn.Pawn(self.__board, 'BLACK'))
+        self.__place_new_piece('f', 7, Pawn.Pawn(self.__board, 'BLACK'))
+        self.__place_new_piece('g', 7, Pawn.Pawn(self.__board, 'BLACK'))
+        self.__place_new_piece('h', 7, Pawn.Pawn(self.__board, 'BLACK'))
+        self.__place_new_piece('a', 8, Rook.Rook(self.__board, 'BLACK'))
+        self.__place_new_piece('h', 8, Rook.Rook(self.__board, 'BLACK'))
+        self.__place_new_piece('e', 8, King.King(self.__board, 'BLACK'))
