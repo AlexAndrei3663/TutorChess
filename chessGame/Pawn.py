@@ -8,9 +8,7 @@ class Pawn(ChessPiece.ChessPiece):
 
     # Sobrecarga toString
     def __str__(self):
-        if self.color == 'WHITE':
-            return 'p'
-        return 'P'
+        return 'p' if self.color == 'WHITE' else 'P'
 
     # Sobrecarga possible_moves
     def possible_moves(self):

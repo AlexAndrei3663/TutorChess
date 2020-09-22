@@ -5,6 +5,8 @@ import ChessPosition
 import Rook
 import King
 import Pawn
+import Bishop
+import Knight
 
 # Tabuleiro visível ao jogador
 class ChessMatch:
@@ -177,6 +179,10 @@ class ChessMatch:
         self.__place_new_piece('h', 2, Pawn.Pawn(self.__board, 'WHITE'))
         self.__place_new_piece('a', 1, Rook.Rook(self.__board, 'WHITE'))
         self.__place_new_piece('h', 1, Rook.Rook(self.__board, 'WHITE'))
+        self.__place_new_piece('c', 1, Bishop.Bishop(self.__board, 'WHITE'))
+        self.__place_new_piece('f', 1, Bishop.Bishop(self.__board, 'WHITE'))
+        self.__place_new_piece('b', 1, Knight.Knight(self.__board, 'WHITE'))
+        self.__place_new_piece('g', 1, Knight.Knight(self.__board, 'WHITE'))
         self.__place_new_piece('e', 1, King.King(self.__board, 'WHITE'))
 
         self.__place_new_piece('a', 7, Pawn.Pawn(self.__board, 'BLACK'))
@@ -189,4 +195,8 @@ class ChessMatch:
         self.__place_new_piece('h', 7, Pawn.Pawn(self.__board, 'BLACK'))
         self.__place_new_piece('a', 8, Rook.Rook(self.__board, 'BLACK'))
         self.__place_new_piece('h', 8, Rook.Rook(self.__board, 'BLACK'))
+        self.__place_new_piece('c', 8, Bishop.Bishop(self.__board, 'BLACK'))
+        self.__place_new_piece('f', 8, Bishop.Bishop(self.__board, 'BLACK'))
+        self.__place_new_piece('b', 8, Knight.Knight(self.__board, 'BLACK'))
+        self.__place_new_piece('g', 8, Knight.Knight(self.__board, 'BLACK'))
         self.__place_new_piece('e', 8, King.King(self.__board, 'BLACK'))
