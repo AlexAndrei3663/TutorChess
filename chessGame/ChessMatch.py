@@ -9,9 +9,12 @@ class ChessMatch:
 
     def __init__(self):
         self.__board = Board.Board(8, 8)
-        self.initial_setup()
         self.__turn = 1
         self.__current_player = 'WHITE'
+        self.__pieces_on_the_board = []
+        self.__captured_pieces = []
+        self.__check = False
+        self.initial_setup()
 
     # Getter do atributo turn
     @property
@@ -22,6 +25,11 @@ class ChessMatch:
     @property
     def current_player(self):
         return self.__current_player
+
+    # Getter do atributo check
+    @property
+    def check(self):
+        return self.__check
 
     # Retorna a matriz com as peças
     def pieces(self):
@@ -36,9 +44,10 @@ class ChessMatch:
 
     # Setup inicial do tabuleiro
     def initial_setup(self):
-        self.__place_new_piece('h', 1, Rook.Rook(self.__board, 'WHITE'))
+        self.__place_new_piece('h', 3, Rook.Rook(self.__board, 'BLACK'))
         self.__place_new_piece('a', 1, Rook.Rook(self.__board, 'WHITE'))
         self.__place_new_piece('f', 3, King.King(self.__board, 'BLACK'))
+        self.__place_new_piece('c', 1, King.King(self.__board, 'WHITE'))
 
     # Retorna Matriz de movimentos possíveis
     def possible_move(self, source):
@@ -49,6 +58,7 @@ class ChessMatch:
     # Função para posicionar nova peça ja convertendo char/int pra int/int
     def __place_new_piece(self, column, row, piece):
         self.__board.place_piece(piece, ChessPosition.ChessPosition(column, row)._to_position())
+        self.__pieces_on_the_board.append(piece)
 
     # Função que retorna a peça capturada pelo movimento
     def perform_chess_move(self, source_position, target_position):
@@ -57,6 +67,12 @@ class ChessMatch:
         self.__validate_source_position(source)
         self.__validate_target_position(source, target)
         captured_piece = self.__make_move(source, target)
+
+        if self.__test_check(self.__current_player):
+            self.__undo_move(source, target, captured_piece)
+            raise ChessException('Você não pode se botar em check')
+
+        self.__check = True if self.__test_check(self.__opponent_color(self.__current_player)) else False
         self.__next_turn()
         return captured_piece
 
@@ -79,9 +95,44 @@ class ChessMatch:
         p = self.__board.remove_piece(source)
         captured_piece = self.__board.remove_piece(target)
         self.__board.place_piece(p, target)
+
+        if (captured_piece != None):
+            self.__pieces_on_the_board.remove(captured_piece)
+            self.__captured_pieces.append(captured_piece)
+
         return captured_piece
+
+    #  Função responsável por retornar o movimento
+    def __undo_move(self, source, target, captured_piece):
+        p = self.__board.remove_piece(target)
+        self.__board.place_piece(p, source)
+
+        if captured_piece != None:
+            self.__board.place_piece(captured_piece, target)
+            self.__captured_pieces.remove(captured_piece)
+            self.__pieces_on_the_board.append(captured_piece)
 
     # Próximo turno
     def __next_turn(self):
         self.__turn += 1
         self.__current_player = 'BLACK' if self.__current_player == 'WHITE' else 'WHITE'
+
+    # Checa a cor inimiga
+    def __opponent_color(self, color):
+        return 'BLACK' if color == 'WHITE' else 'WHITE'
+
+    # Acha o Rei da cor passada
+    def __king(self, color):
+        for p in self.__pieces_on_the_board:
+            if p.color == color and isinstance(p, King.King):
+                return p
+
+    # Testa pra ver se existe check
+    def __test_check(self, color):
+        king_position = self.__king(color).chess_positon()._to_position()
+        for p in self.__pieces_on_the_board:
+            if p.color == self.__opponent_color(color):
+                mat = p.possible_moves()
+                if mat[king_position.row][king_position.column]:
+                    return True
+        return False

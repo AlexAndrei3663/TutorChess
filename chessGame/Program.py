@@ -15,7 +15,6 @@ def main():
             print()
             target = UI.read_chess_position('Target: ')
             captured_piece = tabuleiro.perform_chess_move(source, target)
-            print(captured_piece)
 
         except ChessException as e:
             print(e)

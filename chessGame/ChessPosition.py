@@ -23,9 +23,10 @@ class ChessPosition:
     def _to_position(self):
         return Position.Position(8 - self.__row, ord(self.__column) - ord('a'))
     
+    # Conversão do formato int/int(matriz) para char/int
+    @staticmethod
+    def _from_position(position):
+        return ChessPosition(chr(ord('a') + position.column), 8 - position.row)
+
     def __str__(self):
         return f'{self.__column}{self.__row}'
-
-# 	protected static ChessPosition fromPosition(Position position) {
-# 		return new ChessPosition((char)('a' - position.getColumn()), 8 - position.getRow());
-# 	}
