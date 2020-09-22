@@ -8,9 +8,13 @@ class UI:
         UI.print_board(chess_match.pieces())
         print()
         print(f'Turn: {chess_match.turn}')
-        print(f'Esperando Jogador: {chess_match.current_player}')
-        if chess_match.check:
-            print('CHECK!')
+        if not chess_match.checkmate:
+            print(f'Esperando Jogador: {chess_match.current_player}')
+            if chess_match.check:
+                print('CHECK!')
+        else:
+            print('CHECKMATE!')
+            print(f'Vencedor: {chess_match.current_player}')
 
     # Printa o Tabuleiro
     @staticmethod

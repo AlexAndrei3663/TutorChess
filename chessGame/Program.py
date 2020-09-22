@@ -5,7 +5,7 @@ import ChessMatch
 def main():
     tabuleiro = ChessMatch.ChessMatch()
 
-    while True:
+    while not tabuleiro.checkmate:
         try:
             UI.print_match(tabuleiro)
             print()
@@ -20,7 +20,7 @@ def main():
             print(e)
         except ValueError as e:
             print(e)
-
+    UI.print_match(tabuleiro)
 
 if __name__ == "__main__":
     main()

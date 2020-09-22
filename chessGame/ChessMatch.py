@@ -1,4 +1,5 @@
 from ChessException import ChessException
+import Position
 import Board
 import ChessPosition
 import Rook
@@ -14,6 +15,7 @@ class ChessMatch:
         self.__pieces_on_the_board = []
         self.__captured_pieces = []
         self.__check = False
+        self.__checkmate = False
         self.initial_setup()
 
     # Getter do atributo turn
@@ -31,6 +33,11 @@ class ChessMatch:
     def check(self):
         return self.__check
 
+    # Getter do atributo checkmate
+    @property
+    def checkmate(self):
+        return self.__checkmate
+
     # Retorna a matriz com as peças
     def pieces(self):
         mat = []
@@ -44,10 +51,12 @@ class ChessMatch:
 
     # Setup inicial do tabuleiro
     def initial_setup(self):
-        self.__place_new_piece('h', 3, Rook.Rook(self.__board, 'BLACK'))
-        self.__place_new_piece('a', 1, Rook.Rook(self.__board, 'WHITE'))
-        self.__place_new_piece('f', 3, King.King(self.__board, 'BLACK'))
-        self.__place_new_piece('c', 1, King.King(self.__board, 'WHITE'))
+        self.__place_new_piece('h', 7, Rook.Rook(self.__board, 'WHITE'))
+        self.__place_new_piece('d', 1, Rook.Rook(self.__board, 'WHITE'))
+        self.__place_new_piece('e', 1, King.King(self.__board, 'WHITE'))
+
+        self.__place_new_piece('b', 8, Rook.Rook(self.__board, 'BLACK'))
+        self.__place_new_piece('a', 8, King.King(self.__board, 'BLACK'))
 
     # Retorna Matriz de movimentos possíveis
     def possible_move(self, source):
@@ -73,7 +82,12 @@ class ChessMatch:
             raise ChessException('Você não pode se botar em check')
 
         self.__check = True if self.__test_check(self.__opponent_color(self.__current_player)) else False
-        self.__next_turn()
+
+        if self.__test_checkmate(self.__opponent_color(self.__current_player)):
+            self.__checkmate = True
+        else:
+            self.__next_turn()
+
         return captured_piece
 
     # Função que valida a entrada (origem da peça)
@@ -129,10 +143,30 @@ class ChessMatch:
 
     # Testa pra ver se existe check
     def __test_check(self, color):
-        king_position = self.__king(color).chess_positon()._to_position()
+        king_position = self.__king(color).chess_position()._to_position()
         for p in self.__pieces_on_the_board:
             if p.color == self.__opponent_color(color):
                 mat = p.possible_moves()
                 if mat[king_position.row][king_position.column]:
                     return True
         return False
+
+    # Testa pra ver se existe checkmate
+    def __test_checkmate(self, color):
+        if not self.__test_check(color):
+            return False
+
+        for p in self.__pieces_on_the_board:
+            if p.color == color:
+                mat = p.possible_moves()
+                for i in range(len(mat)):
+                    for j in range(len(mat)):
+                        if mat[i][j]:
+                            source = p.chess_position()._to_position()
+                            target = Position.Position(i, j)
+                            captured_piece = self.__make_move(source, target)
+                            test_check = self.__test_check(color)
+                            self.__undo_move(source, target, captured_piece)
+                            if not test_check:
+                                return False
+        return True

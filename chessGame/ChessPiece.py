@@ -21,7 +21,7 @@ class ChessPiece(Piece.Piece, ABC):
         return self.__move_count
 
     # Recolhe o atributo posição da peça e manda ja no formato char/int
-    def chess_positon(self):
+    def chess_position(self):
         return ChessPosition.ChessPosition._from_position(self._position)
 
     # Checa para ver se a peça na posição é do oponente
