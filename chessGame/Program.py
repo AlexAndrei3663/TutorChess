@@ -16,6 +16,12 @@ def main():
             target = UI.read_chess_position('Target: ')
             captured_piece = tabuleiro.perform_chess_move(source, target)
 
+            if tabuleiro.promoted != None:
+                type = str(input('Digite a peça para promoção (B/N/R/Q): '))
+                while type != 'B' and type != 'N' and type != 'R' and type != 'Q':
+                    type = str(input('Digite a peça para promoção (B/N/R/Q): '))
+                tabuleiro.replace_promoted_piece(type)
+
         except ChessException as e:
             print(e)
         except ValueError as e:

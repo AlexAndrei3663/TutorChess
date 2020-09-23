@@ -21,6 +21,7 @@ class ChessMatch:
         self.__check = False
         self.__checkmate = False
         self.__en_passant_vulnerable = None
+        self.__promoted = None
         self.initial_setup()
 
     # Getter do atributo turn
@@ -47,6 +48,11 @@ class ChessMatch:
     @property
     def en_passant_vulnerable(self):
         return self.__en_passant_vulnerable
+
+    # 
+    @property
+    def promoted(self):
+        return self.__promoted
 
     # Retorna a matriz com as peças
     def pieces(self):
@@ -83,6 +89,13 @@ class ChessMatch:
             self.__undo_move(source, target, captured_piece)
             raise ChessException('O seu rei está em check')
 
+        # Movimento especial promoção
+        self.__promoted = None
+        if isinstance(moved_piece, Pawn.Pawn):
+            if (moved_piece.color == 'WHITE' and target.row == 0) or (moved_piece.color == 'BLACK' and target.row == 7):
+                self.__promoted = self.__board.piece(target.row, target.column)
+                self.__promoted = self.replace_promoted_piece('Q')
+
         self.__check = True if self.__test_check(self.__opponent_color(self.__current_player)) else False
 
         if self.__test_checkmate(self.__opponent_color(self.__current_player)):
@@ -97,6 +110,31 @@ class ChessMatch:
             self.__en_passant_vulnerable = None
 
         return captured_piece
+
+    # Troca o peão promovido para a peça escolhida
+    def replace_promoted_piece(self, type):
+        if type != 'B' and type != 'N' and type != 'R' and type != 'Q':
+            return self.__promoted
+
+        promoted_position = self.__promoted.chess_position()._to_position()
+        p = self.__board.remove_piece(promoted_position)
+        self.__pieces_on_the_board.remove(p)
+
+        new_piece = self.__new_piece(type, self.__promoted.color)
+        self.__board.place_piece(new_piece, promoted_position)
+        self.__pieces_on_the_board.append(new_piece)
+
+        return new_piece
+
+    # Função que cria nova peça depois que o jogo ja começou
+    def __new_piece(self, type, color):
+        if type == 'B':
+            return Bishop.Bishop(self.__board, color)
+        if type == 'N':
+            return Knight.Knight(self.__board, color)
+        if type == 'Q':
+            return Queen.Queen(self.__board, color)
+        return Rook.Rook(self.__board, color)
 
     # Função que valida a entrada (origem da peça)
     def __validate_source_position(self, position):
@@ -244,8 +282,8 @@ class ChessMatch:
         self.__place_new_piece('f', 2, Pawn.Pawn(self.__board, 'WHITE', self))
         self.__place_new_piece('g', 2, Pawn.Pawn(self.__board, 'WHITE', self))
         self.__place_new_piece('h', 2, Pawn.Pawn(self.__board, 'WHITE', self))
-        self.__place_new_piece('a', 1, Rook.Rook(self.__board, 'WHITE', self))
-        self.__place_new_piece('h', 1, Rook.Rook(self.__board, 'WHITE', self))
+        self.__place_new_piece('a', 1, Rook.Rook(self.__board, 'WHITE'))
+        self.__place_new_piece('h', 1, Rook.Rook(self.__board, 'WHITE'))
         self.__place_new_piece('c', 1, Bishop.Bishop(self.__board, 'WHITE'))
         self.__place_new_piece('f', 1, Bishop.Bishop(self.__board, 'WHITE'))
         self.__place_new_piece('b', 1, Knight.Knight(self.__board, 'WHITE'))
@@ -261,8 +299,8 @@ class ChessMatch:
         self.__place_new_piece('f', 7, Pawn.Pawn(self.__board, 'BLACK', self))
         self.__place_new_piece('g', 7, Pawn.Pawn(self.__board, 'BLACK', self))
         self.__place_new_piece('h', 7, Pawn.Pawn(self.__board, 'BLACK', self))
-        self.__place_new_piece('a', 8, Rook.Rook(self.__board, 'BLACK', self))
-        self.__place_new_piece('h', 8, Rook.Rook(self.__board, 'BLACK', self))
+        self.__place_new_piece('a', 8, Rook.Rook(self.__board, 'BLACK'))
+        self.__place_new_piece('h', 8, Rook.Rook(self.__board, 'BLACK'))
         self.__place_new_piece('c', 8, Bishop.Bishop(self.__board, 'BLACK'))
         self.__place_new_piece('f', 8, Bishop.Bishop(self.__board, 'BLACK'))
         self.__place_new_piece('b', 8, Knight.Knight(self.__board, 'BLACK'))
