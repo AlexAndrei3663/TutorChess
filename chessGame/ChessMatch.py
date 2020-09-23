@@ -7,6 +7,7 @@ import King
 import Pawn
 import Bishop
 import Knight
+import Queen
 
 # Tabuleiro visível ao jogador
 class ChessMatch:
@@ -73,7 +74,7 @@ class ChessMatch:
 
         if self.__test_check(self.__current_player):
             self.__undo_move(source, target, captured_piece)
-            raise ChessException('Você não pode se botar em check')
+            raise ChessException('O seu rei está em check')
 
         self.__check = True if self.__test_check(self.__opponent_color(self.__current_player)) else False
 
@@ -105,9 +106,25 @@ class ChessMatch:
         captured_piece = self.__board.remove_piece(target)
         self.__board.place_piece(p, target)
 
-        if (captured_piece != None):
+        if captured_piece != None:
             self.__pieces_on_the_board.remove(captured_piece)
             self.__captured_pieces.append(captured_piece)
+
+        # Movimento especial rook pelo lado do rei
+        if isinstance(p, King.King) and target.column == source.column + 2:
+            source_tower = Position.Position(source.row, source.column + 3)
+            target_tower = Position.Position(source.row, source.column + 1)
+            rook = self.__board.remove_piece(source_tower)
+            self.__board.place_piece(rook, target_tower)
+            rook.increase_move_count()
+
+        # Movimento especial rook pelo lado da rainha
+        if isinstance(p, King.King) and target.column == source.column - 2:
+            source_tower = Position.Position(source.row, source.column - 4)
+            target_tower = Position.Position(source.row, source.column - 1)
+            rook = self.__board.remove_piece(source_tower)
+            self.__board.place_piece(rook, target_tower)
+            rook.increase_move_count()
 
         return captured_piece
 
@@ -121,6 +138,22 @@ class ChessMatch:
             self.__board.place_piece(captured_piece, target)
             self.__captured_pieces.remove(captured_piece)
             self.__pieces_on_the_board.append(captured_piece)
+
+        # Movimento especial rook pelo lado do rei
+        if isinstance(p, King.King) and target.column == source.column + 2:
+            source_tower = Position.Position(source.row, source.column + 3)
+            target_tower = Position.Position(source.row, source.column + 1)
+            rook = self.__board.remove_piece(target_tower)
+            self.__board.place_piece(rook, source_tower)
+            rook.decrease_move_count()
+
+        # Movimento especial rook pelo lado da rainha
+        if isinstance(p, King.King) and target.column == source.column - 2:
+            source_tower = Position.Position(source.row, source.column - 4)
+            target_tower = Position.Position(source.row, source.column - 1)
+            rook = self.__board.remove_piece(target_tower)
+            self.__board.place_piece(rook, source_tower)
+            rook.decrease_move_count()
 
     # Próximo turno
     def __next_turn(self):
@@ -183,7 +216,8 @@ class ChessMatch:
         self.__place_new_piece('f', 1, Bishop.Bishop(self.__board, 'WHITE'))
         self.__place_new_piece('b', 1, Knight.Knight(self.__board, 'WHITE'))
         self.__place_new_piece('g', 1, Knight.Knight(self.__board, 'WHITE'))
-        self.__place_new_piece('e', 1, King.King(self.__board, 'WHITE'))
+        self.__place_new_piece('d', 1, Queen.Queen(self.__board, 'WHITE'))
+        self.__place_new_piece('e', 1, King.King(self.__board, 'WHITE', self))
 
         self.__place_new_piece('a', 7, Pawn.Pawn(self.__board, 'BLACK'))
         self.__place_new_piece('b', 7, Pawn.Pawn(self.__board, 'BLACK'))
@@ -199,4 +233,5 @@ class ChessMatch:
         self.__place_new_piece('f', 8, Bishop.Bishop(self.__board, 'BLACK'))
         self.__place_new_piece('b', 8, Knight.Knight(self.__board, 'BLACK'))
         self.__place_new_piece('g', 8, Knight.Knight(self.__board, 'BLACK'))
-        self.__place_new_piece('e', 8, King.King(self.__board, 'BLACK'))
+        self.__place_new_piece('d', 8, Queen.Queen(self.__board, 'BLACK'))
+        self.__place_new_piece('e', 8, King.King(self.__board, 'BLACK', self))
