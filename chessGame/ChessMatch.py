@@ -20,6 +20,7 @@ class ChessMatch:
         self.__captured_pieces = []
         self.__check = False
         self.__checkmate = False
+        self.__en_passant_vulnerable = None
         self.initial_setup()
 
     # Getter do atributo turn
@@ -41,6 +42,11 @@ class ChessMatch:
     @property
     def checkmate(self):
         return self.__checkmate
+
+    # Getter do atributo en passant vulnerable
+    @property
+    def en_passant_vulnerable(self):
+        return self.__en_passant_vulnerable
 
     # Retorna a matriz com as peças
     def pieces(self):
@@ -71,6 +77,7 @@ class ChessMatch:
         self.__validate_source_position(source)
         self.__validate_target_position(source, target)
         captured_piece = self.__make_move(source, target)
+        moved_piece = self.__board.piece(target.row, target.column)
 
         if self.__test_check(self.__current_player):
             self.__undo_move(source, target, captured_piece)
@@ -82,6 +89,12 @@ class ChessMatch:
             self.__checkmate = True
         else:
             self.__next_turn()
+
+        # Movimento especial en passant
+        if isinstance(moved_piece, Pawn.Pawn) and (target.row == source.row - 2 or target.row == source.row + 2):
+            self.__en_passant_vulnerable = moved_piece
+        else:
+            self.__en_passant_vulnerable = None
 
         return captured_piece
 
@@ -126,6 +139,17 @@ class ChessMatch:
             self.__board.place_piece(rook, target_tower)
             rook.increase_move_count()
 
+        # Movimento especial en passant
+        if isinstance(p, Pawn.Pawn):
+            if source.column != target.column and captured_piece == None:
+                if p.color == 'WHITE':
+                    pawn_positon = Position.Position(target.row + 1, target.column)
+                else:
+                    pawn_positon = Position.Position(target.row - 1, target.column)
+                captured_piece = self.__board.remove_piece(pawn_positon)
+                self.__captured_pieces.append(captured_piece)
+                self.__pieces_on_the_board.remove(captured_piece)
+
         return captured_piece
 
     #  Função responsável por retornar o movimento
@@ -154,6 +178,16 @@ class ChessMatch:
             rook = self.__board.remove_piece(target_tower)
             self.__board.place_piece(rook, source_tower)
             rook.decrease_move_count()
+
+        # Movimento especial en passant
+        if isinstance(p, Pawn.Pawn):
+            if source.column != target.column and captured_piece == self.__en_passant_vulnerable:
+                pawn = self.__board.remove_piece(target)
+                if p.color == 'WHITE':
+                    pawn_positon = Position.Position(3, target.column)
+                else:
+                    pawn_positon = Position.Position(4, target.column)
+                self.__board.place_piece(pawn, pawn_positon)
 
     # Próximo turno
     def __next_turn(self):
@@ -202,16 +236,16 @@ class ChessMatch:
 
     # Setup inicial do tabuleiro
     def initial_setup(self):
-        self.__place_new_piece('a', 2, Pawn.Pawn(self.__board, 'WHITE'))
-        self.__place_new_piece('b', 2, Pawn.Pawn(self.__board, 'WHITE'))
-        self.__place_new_piece('c', 2, Pawn.Pawn(self.__board, 'WHITE'))
-        self.__place_new_piece('d', 2, Pawn.Pawn(self.__board, 'WHITE'))
-        self.__place_new_piece('e', 2, Pawn.Pawn(self.__board, 'WHITE'))
-        self.__place_new_piece('f', 2, Pawn.Pawn(self.__board, 'WHITE'))
-        self.__place_new_piece('g', 2, Pawn.Pawn(self.__board, 'WHITE'))
-        self.__place_new_piece('h', 2, Pawn.Pawn(self.__board, 'WHITE'))
-        self.__place_new_piece('a', 1, Rook.Rook(self.__board, 'WHITE'))
-        self.__place_new_piece('h', 1, Rook.Rook(self.__board, 'WHITE'))
+        self.__place_new_piece('a', 2, Pawn.Pawn(self.__board, 'WHITE', self))
+        self.__place_new_piece('b', 2, Pawn.Pawn(self.__board, 'WHITE', self))
+        self.__place_new_piece('c', 2, Pawn.Pawn(self.__board, 'WHITE', self))
+        self.__place_new_piece('d', 2, Pawn.Pawn(self.__board, 'WHITE', self))
+        self.__place_new_piece('e', 2, Pawn.Pawn(self.__board, 'WHITE', self))
+        self.__place_new_piece('f', 2, Pawn.Pawn(self.__board, 'WHITE', self))
+        self.__place_new_piece('g', 2, Pawn.Pawn(self.__board, 'WHITE', self))
+        self.__place_new_piece('h', 2, Pawn.Pawn(self.__board, 'WHITE', self))
+        self.__place_new_piece('a', 1, Rook.Rook(self.__board, 'WHITE', self))
+        self.__place_new_piece('h', 1, Rook.Rook(self.__board, 'WHITE', self))
         self.__place_new_piece('c', 1, Bishop.Bishop(self.__board, 'WHITE'))
         self.__place_new_piece('f', 1, Bishop.Bishop(self.__board, 'WHITE'))
         self.__place_new_piece('b', 1, Knight.Knight(self.__board, 'WHITE'))
@@ -219,16 +253,16 @@ class ChessMatch:
         self.__place_new_piece('d', 1, Queen.Queen(self.__board, 'WHITE'))
         self.__place_new_piece('e', 1, King.King(self.__board, 'WHITE', self))
 
-        self.__place_new_piece('a', 7, Pawn.Pawn(self.__board, 'BLACK'))
-        self.__place_new_piece('b', 7, Pawn.Pawn(self.__board, 'BLACK'))
-        self.__place_new_piece('c', 7, Pawn.Pawn(self.__board, 'BLACK'))
-        self.__place_new_piece('d', 7, Pawn.Pawn(self.__board, 'BLACK'))
-        self.__place_new_piece('e', 7, Pawn.Pawn(self.__board, 'BLACK'))
-        self.__place_new_piece('f', 7, Pawn.Pawn(self.__board, 'BLACK'))
-        self.__place_new_piece('g', 7, Pawn.Pawn(self.__board, 'BLACK'))
-        self.__place_new_piece('h', 7, Pawn.Pawn(self.__board, 'BLACK'))
-        self.__place_new_piece('a', 8, Rook.Rook(self.__board, 'BLACK'))
-        self.__place_new_piece('h', 8, Rook.Rook(self.__board, 'BLACK'))
+        self.__place_new_piece('a', 7, Pawn.Pawn(self.__board, 'BLACK', self))
+        self.__place_new_piece('b', 7, Pawn.Pawn(self.__board, 'BLACK', self))
+        self.__place_new_piece('c', 7, Pawn.Pawn(self.__board, 'BLACK', self))
+        self.__place_new_piece('d', 7, Pawn.Pawn(self.__board, 'BLACK', self))
+        self.__place_new_piece('e', 7, Pawn.Pawn(self.__board, 'BLACK', self))
+        self.__place_new_piece('f', 7, Pawn.Pawn(self.__board, 'BLACK', self))
+        self.__place_new_piece('g', 7, Pawn.Pawn(self.__board, 'BLACK', self))
+        self.__place_new_piece('h', 7, Pawn.Pawn(self.__board, 'BLACK', self))
+        self.__place_new_piece('a', 8, Rook.Rook(self.__board, 'BLACK', self))
+        self.__place_new_piece('h', 8, Rook.Rook(self.__board, 'BLACK', self))
         self.__place_new_piece('c', 8, Bishop.Bishop(self.__board, 'BLACK'))
         self.__place_new_piece('f', 8, Bishop.Bishop(self.__board, 'BLACK'))
         self.__place_new_piece('b', 8, Knight.Knight(self.__board, 'BLACK'))
