@@ -1,9 +1,9 @@
 from abc import ABC, abstractmethod
-import ChessPosition
-import Piece
+from .ChessPosition import ChessPosition
+from boardgame.Piece import Piece
 
 # Classe peça que é visível para o jogador
-class ChessPiece(Piece.Piece, ABC):
+class ChessPiece(Piece, ABC):
     
     def __init__(self, board, color):
         super().__init__(board)
@@ -22,7 +22,7 @@ class ChessPiece(Piece.Piece, ABC):
 
     # Recolhe o atributo posição da peça e manda ja no formato char/int
     def chess_position(self):
-        return ChessPosition.ChessPosition._from_position(self._position)
+        return ChessPosition._from_position(self._position)
 
     # Checa para ver se a peça na posição é do oponente
     def _is_there_opponent_piece(self, position):

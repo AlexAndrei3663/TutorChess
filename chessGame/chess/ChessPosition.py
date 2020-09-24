@@ -1,5 +1,5 @@
-from ChessException import ChessException
-import Position
+from .ChessException import ChessException
+from boardgame.Position import Position
 
 class ChessPosition:
 
@@ -21,7 +21,7 @@ class ChessPosition:
 
     # Conversão do formato char/int para int/int(matriz)
     def _to_position(self):
-        return Position.Position(8 - self.__row, ord(self.__column) - ord('a'))
+        return Position(8 - self.__row, ord(self.__column) - ord('a'))
     
     # Conversão do formato int/int(matriz) para char/int
     @staticmethod

@@ -1,6 +1,5 @@
-from UI import UI
-from ChessException import ChessException
-import ChessMatch
+from chess import ChessException, ChessMatch
+from application.UI import UI
 
 def main():
     tabuleiro = ChessMatch.ChessMatch()
@@ -22,7 +21,7 @@ def main():
                     type = str(input('Digite a peça para promoção (B/N/R/Q): '))
                 tabuleiro.replace_promoted_piece(type)
 
-        except ChessException as e:
+        except ChessException.ChessException as e:
             print(e)
         except ValueError as e:
             print(e)

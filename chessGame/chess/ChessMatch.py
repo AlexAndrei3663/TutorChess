@@ -1,19 +1,14 @@
-from ChessException import ChessException
-import Position
-import Board
-import ChessPosition
-import Rook
-import King
-import Pawn
-import Bishop
-import Knight
-import Queen
+from .ChessException import ChessException
+from .pieces import Bishop, King, Knight, Pawn, Queen, Rook
+from boardgame.Position import Position
+from boardgame.Board import Board
+from .ChessPosition import ChessPosition
 
 # Tabuleiro visível ao jogador
 class ChessMatch:
 
     def __init__(self):
-        self.__board = Board.Board(8, 8)
+        self.__board = Board(8, 8)
         self.__turn = 1
         self.__current_player = 'WHITE'
         self.__pieces_on_the_board = []
@@ -78,7 +73,7 @@ class ChessMatch:
 
     # Função para posicionar nova peça ja convertendo char/int pra int/int
     def __place_new_piece(self, column, row, piece):
-        self.__board.place_piece(piece, ChessPosition.ChessPosition(column, row)._to_position())
+        self.__board.place_piece(piece, ChessPosition(column, row)._to_position())
         self.__pieces_on_the_board.append(piece)
 
     # Função que retorna a peça capturada pelo movimento
@@ -170,16 +165,16 @@ class ChessMatch:
 
         # Movimento especial rook pelo lado do rei
         if isinstance(p, King.King) and target.column == source.column + 2:
-            source_tower = Position.Position(source.row, source.column + 3)
-            target_tower = Position.Position(source.row, source.column + 1)
+            source_tower = Position(source.row, source.column + 3)
+            target_tower = Position(source.row, source.column + 1)
             rook = self.__board.remove_piece(source_tower)
             self.__board.place_piece(rook, target_tower)
             rook.increase_move_count()
 
         # Movimento especial rook pelo lado da rainha
         if isinstance(p, King.King) and target.column == source.column - 2:
-            source_tower = Position.Position(source.row, source.column - 4)
-            target_tower = Position.Position(source.row, source.column - 1)
+            source_tower = Position(source.row, source.column - 4)
+            target_tower = Position(source.row, source.column - 1)
             rook = self.__board.remove_piece(source_tower)
             self.__board.place_piece(rook, target_tower)
             rook.increase_move_count()
@@ -188,9 +183,9 @@ class ChessMatch:
         if isinstance(p, Pawn.Pawn):
             if source.column != target.column and captured_piece == None:
                 if p.color == 'WHITE':
-                    pawn_positon = Position.Position(target.row + 1, target.column)
+                    pawn_positon = Position(target.row + 1, target.column)
                 else:
-                    pawn_positon = Position.Position(target.row - 1, target.column)
+                    pawn_positon = Position(target.row - 1, target.column)
                 captured_piece = self.__board.remove_piece(pawn_positon)
                 self.__captured_pieces.append(captured_piece)
                 self.__pieces_on_the_board.remove(captured_piece)
@@ -210,16 +205,16 @@ class ChessMatch:
 
         # Movimento especial rook pelo lado do rei
         if isinstance(p, King.King) and target.column == source.column + 2:
-            source_tower = Position.Position(source.row, source.column + 3)
-            target_tower = Position.Position(source.row, source.column + 1)
+            source_tower = Position(source.row, source.column + 3)
+            target_tower = Position(source.row, source.column + 1)
             rook = self.__board.remove_piece(target_tower)
             self.__board.place_piece(rook, source_tower)
             rook.decrease_move_count()
 
         # Movimento especial rook pelo lado da rainha
         if isinstance(p, King.King) and target.column == source.column - 2:
-            source_tower = Position.Position(source.row, source.column - 4)
-            target_tower = Position.Position(source.row, source.column - 1)
+            source_tower = Position(source.row, source.column - 4)
+            target_tower = Position(source.row, source.column - 1)
             rook = self.__board.remove_piece(target_tower)
             self.__board.place_piece(rook, source_tower)
             rook.decrease_move_count()
@@ -229,9 +224,9 @@ class ChessMatch:
             if source.column != target.column and captured_piece == self.__en_passant_vulnerable:
                 pawn = self.__board.remove_piece(target)
                 if p.color == 'WHITE':
-                    pawn_positon = Position.Position(3, target.column)
+                    pawn_positon = Position(3, target.column)
                 else:
-                    pawn_positon = Position.Position(4, target.column)
+                    pawn_positon = Position(4, target.column)
                 self.__board.place_piece(pawn, pawn_positon)
 
     # Próximo turno
@@ -271,7 +266,7 @@ class ChessMatch:
                     for j in range(len(mat)):
                         if mat[i][j]:
                             source = p.chess_position()._to_position()
-                            target = Position.Position(i, j)
+                            target = Position(i, j)
                             captured_piece = self.__make_move(source, target)
                             test_check = self.__test_check(color)
                             self.__undo_move(source, target, captured_piece)
@@ -300,13 +295,13 @@ class ChessMatch:
                         for j in range(len(mat)):
                             if mat[i][j]:
                                 source = p.chess_position()._to_position()
-                                target = Position.Position(i, j)
+                                target = Position(i, j)
                                 captured_piece = self.__make_move(source, target)
                                 test_check = self.__test_check(self.__opponent_color(self.__current_player))
                                 self.__undo_move(source, target, captured_piece)
                                 if not test_check:
                                     return False
-            return True
+                return True
         return False
 
     # Setup inicial do tabuleiro

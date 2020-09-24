@@ -1,5 +1,5 @@
-import ChessPiece
-import Position
+from .. import ChessPiece
+from boardgame.Position import Position
 
 class Queen(ChessPiece.ChessPiece):
 
@@ -15,7 +15,7 @@ class Queen(ChessPiece.ChessPiece):
         mat = [[False]*8, [False]*8, [False]*8, [False]*8, [False]*8, [False]*8, [False]*8, [False]*8]
 
         # Movimentos pra cima
-        p = Position.Position(self._position.row - 1, self._position.column)
+        p = Position(self._position.row - 1, self._position.column)
         while self.board.is_position_exists(p.row, p.column) and not self.board.is_there_a_piece(p):
             mat[p.row][p.column] = True
             p.row -= 1
@@ -23,7 +23,7 @@ class Queen(ChessPiece.ChessPiece):
             mat[p.row][p.column] = True
 
         # Movimentos pra baixo
-        p = Position.Position(self._position.row + 1, self._position.column)
+        p = Position(self._position.row + 1, self._position.column)
         while self.board.is_position_exists(p.row, p.column) and not self.board.is_there_a_piece(p):
             mat[p.row][p.column] = True
             p.row += 1
@@ -31,7 +31,7 @@ class Queen(ChessPiece.ChessPiece):
             mat[p.row][p.column] = True
 
         # Movimentos pra direita
-        p = Position.Position(self._position.row, self._position.column + 1)
+        p = Position(self._position.row, self._position.column + 1)
         while self.board.is_position_exists(p.row, p.column) and not self.board.is_there_a_piece(p):
             mat[p.row][p.column] = True
             p.column += 1
@@ -39,7 +39,7 @@ class Queen(ChessPiece.ChessPiece):
             mat[p.row][p.column] = True
 
         # Movimentos pra esquerda
-        p = Position.Position(self._position.row, self._position.column - 1)
+        p = Position(self._position.row, self._position.column - 1)
         while self.board.is_position_exists(p.row, p.column) and not self.board.is_there_a_piece(p):
             mat[p.row][p.column] = True
             p.column -= 1
@@ -47,7 +47,7 @@ class Queen(ChessPiece.ChessPiece):
             mat[p.row][p.column] = True
 
         # Movimentos pra cima/direita
-        p = Position.Position(self._position.row - 1, self._position.column + 1)
+        p = Position(self._position.row - 1, self._position.column + 1)
         while self.board.is_position_exists(p.row, p.column) and not self.board.is_there_a_piece(p):
             mat[p.row][p.column] = True
             p.values(p.row - 1, p.column + 1)
@@ -55,7 +55,7 @@ class Queen(ChessPiece.ChessPiece):
             mat[p.row][p.column] = True
 
         # Movimentos pra cima/esquerda
-        p = Position.Position(self._position.row - 1, self._position.column - 1)
+        p = Position(self._position.row - 1, self._position.column - 1)
         while self.board.is_position_exists(p.row, p.column) and not self.board.is_there_a_piece(p):
             mat[p.row][p.column] = True
             p.values(p.row - 1, p.column - 1)
@@ -63,7 +63,7 @@ class Queen(ChessPiece.ChessPiece):
             mat[p.row][p.column] = True
 
         # Movimentos pra baixo/direita
-        p = Position.Position(self._position.row + 1, self._position.column + 1)
+        p = Position(self._position.row + 1, self._position.column + 1)
         while self.board.is_position_exists(p.row, p.column) and not self.board.is_there_a_piece(p):
             mat[p.row][p.column] = True
             p.values(p.row + 1, p.column + 1)
@@ -71,7 +71,7 @@ class Queen(ChessPiece.ChessPiece):
             mat[p.row][p.column] = True
 
         # Movimentos pra baixo/esquerda
-        p = Position.Position(self._position.row + 1, self._position.column - 1)
+        p = Position(self._position.row + 1, self._position.column - 1)
         while self.board.is_position_exists(p.row, p.column) and not self.board.is_there_a_piece(p):
             mat[p.row][p.column] = True
             p.values(p.row + 1, p.column - 1)

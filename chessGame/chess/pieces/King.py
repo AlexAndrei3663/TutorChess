@@ -1,6 +1,6 @@
-import ChessPiece
-import Position
-import Rook
+from . import Rook
+from .. import ChessPiece
+from boardgame.Position import Position
 
 class King(ChessPiece.ChessPiece):
 
@@ -27,61 +27,61 @@ class King(ChessPiece.ChessPiece):
         mat = [[False]*8, [False]*8, [False]*8, [False]*8, [False]*8, [False]*8, [False]*8, [False]*8]
 
         # Movimentos pra cima
-        p = Position.Position(self._position.row - 1, self._position.column)
+        p = Position(self._position.row - 1, self._position.column)
         if self.board.is_position_exists(p.row, p.column) and self.__can_move(p):
             mat[p.row][p.column] = True
 
         # Movimentos pra baixo
-        p = Position.Position(self._position.row + 1, self._position.column)
+        p = Position(self._position.row + 1, self._position.column)
         if self.board.is_position_exists(p.row, p.column) and self.__can_move(p):
             mat[p.row][p.column] = True
 
         # Movimentos pra direita
-        p = Position.Position(self._position.row, self._position.column + 1)
+        p = Position(self._position.row, self._position.column + 1)
         if self.board.is_position_exists(p.row, p.column) and self.__can_move(p):
             mat[p.row][p.column] = True
 
         # Movimentos pra esquerda
-        p = Position.Position(self._position.row, self._position.column - 1)
+        p = Position(self._position.row, self._position.column - 1)
         if self.board.is_position_exists(p.row, p.column) and self.__can_move(p):
             mat[p.row][p.column] = True
 
         # Movimentos pra cima/direita
-        p = Position.Position(self._position.row - 1, self._position.column + 1)
+        p = Position(self._position.row - 1, self._position.column + 1)
         if self.board.is_position_exists(p.row, p.column) and self.__can_move(p):
             mat[p.row][p.column] = True
 
         # Movimentos pra cima/esquerda
-        p = Position.Position(self._position.row - 1, self._position.column - 1)
+        p = Position(self._position.row - 1, self._position.column - 1)
         if self.board.is_position_exists(p.row, p.column) and self.__can_move(p):
             mat[p.row][p.column] = True
 
         # Movimentos pra baixo/direita
-        p = Position.Position(self._position.row + 1, self._position.column + 1)
+        p = Position(self._position.row + 1, self._position.column + 1)
         if self.board.is_position_exists(p.row, p.column) and self.__can_move(p):
             mat[p.row][p.column] = True
 
         # Movimentos pra baixo/esquerda
-        p = Position.Position(self._position.row + 1, self._position.column - 1)
+        p = Position(self._position.row + 1, self._position.column - 1)
         if self.board.is_position_exists(p.row, p.column) and self.__can_move(p):
             mat[p.row][p.column] = True
 
         # Movimento especial Rook
         if self.move_count == 0 and not self.__chess_match.check:
             # Rook pelo lado do rei
-            position_tower = Position.Position(self._position.row, self._position.column + 3)
+            position_tower = Position(self._position.row, self._position.column + 3)
             if self.__test_rook(position_tower):
-                p1 = Position.Position(self._position.row, self._position.column + 1)
-                p2 = Position.Position(self._position.row, self._position.column + 2)
+                p1 = Position(self._position.row, self._position.column + 1)
+                p2 = Position(self._position.row, self._position.column + 2)
                 if self.board.piece(p1.row, p1.column) == None and self.board.piece(p2.row, p2.column) == None:
                     mat[self._position.row][self._position.column + 2] = True
 
             # Rook pelo lado da rainha
-            position_tower = Position.Position(self._position.row, self._position.column - 4)
+            position_tower = Position(self._position.row, self._position.column - 4)
             if self.__test_rook(position_tower):
-                p1 = Position.Position(self._position.row, self._position.column - 1)
-                p2 = Position.Position(self._position.row, self._position.column - 2)
-                p3 = Position.Position(self._position.row, self._position.column - 3)
+                p1 = Position(self._position.row, self._position.column - 1)
+                p2 = Position(self._position.row, self._position.column - 2)
+                p3 = Position(self._position.row, self._position.column - 3)
                 if self.board.piece(p1.row, p1.column) == None and self.board.piece(p2.row, p2.column) == None and self.board.piece(p3.row, p3.column):
                     mat[self._position.row][self._position.column - 2] = True
 

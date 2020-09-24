@@ -1,4 +1,4 @@
-from BoardException import *
+from .BoardException import *
 
 # Classe de excções que são levantadas pelo usuário (forma de validação)
 class ChessException(BoardException):
