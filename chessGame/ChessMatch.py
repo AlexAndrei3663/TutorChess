@@ -20,6 +20,7 @@ class ChessMatch:
         self.__captured_pieces = []
         self.__check = False
         self.__checkmate = False
+        self.__draw = False
         self.__en_passant_vulnerable = None
         self.__promoted = None
         self.initial_setup()
@@ -43,6 +44,10 @@ class ChessMatch:
     @property
     def checkmate(self):
         return self.__checkmate
+
+    @property
+    def draw(self):
+        return self.__draw
 
     # Getter do atributo en passant vulnerable
     @property
@@ -89,6 +94,8 @@ class ChessMatch:
             self.__undo_move(source, target, captured_piece)
             raise ChessException('O seu rei está em check')
 
+        self.__check = True if self.__test_check(self.__opponent_color(self.__current_player)) else False
+
         # Movimento especial promoção
         self.__promoted = None
         if isinstance(moved_piece, Pawn.Pawn):
@@ -96,10 +103,10 @@ class ChessMatch:
                 self.__promoted = self.__board.piece(target.row, target.column)
                 self.__promoted = self.replace_promoted_piece('Q')
 
-        self.__check = True if self.__test_check(self.__opponent_color(self.__current_player)) else False
-
         if self.__test_checkmate(self.__opponent_color(self.__current_player)):
             self.__checkmate = True
+        elif self.__test_draw():
+            self.__draw = True
         else:
             self.__next_turn()
 
@@ -271,6 +278,36 @@ class ChessMatch:
                             if not test_check:
                                 return False
         return True
+
+    # Testa pra ver se existe empate
+    def __test_draw(self):
+        # Falta de material (B e K vs K, N e K vs K, K vs K)
+        if len(self.__pieces_on_the_board) == 3:
+            for p in self.__pieces_on_the_board:
+                if isinstance(p, Knight.Knight) or isinstance(p, Bishop.Bishop):
+                    return True
+        elif len(self.__pieces_on_the_board) == 2:
+            return True
+
+        # Afogamento
+        for p in self.__pieces_on_the_board:
+            if p.color == self.__current_player:
+                if p.is_there_any_possible_move() and not isinstance(p, King.King):
+                    return False
+                else:
+                    mat = p.possible_moves()
+                    for i in range(len(mat)):
+                        for j in range(len(mat)):
+                            if mat[i][j]:
+                                source = p.chess_position()._to_position()
+                                target = Position.Position(i, j)
+                                captured_piece = self.__make_move(source, target)
+                                test_check = self.__test_check(color)
+                                self.__undo_move(source, target, captured_piece)
+                                if not test_check:
+                                    return False
+            return True
+        return False
 
     # Setup inicial do tabuleiro
     def initial_setup(self):
