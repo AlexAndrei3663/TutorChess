@@ -12,6 +12,9 @@ class UI:
             print(f'Esperando Jogador: {chess_match.current_player}')
             if chess_match.check:
                 print('CHECK!')
+            elif chess_match.draw:
+                print('EMPATE!')
+                print('Não ocorreu jogador vencedor')
         else:
             print('CHECKMATE!')
             print(f'Vencedor: {chess_match.current_player}')

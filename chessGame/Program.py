@@ -5,7 +5,7 @@ import ChessMatch
 def main():
     tabuleiro = ChessMatch.ChessMatch()
 
-    while not tabuleiro.checkmate:
+    while not tabuleiro.checkmate and not tabuleiro.draw:
         try:
             UI.print_match(tabuleiro)
             print()
