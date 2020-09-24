@@ -1,4 +1,4 @@
-from chess.BoardException import BoardException
+from .BoardException import BoardException
 
 # Classe responsável por armazenar as peças do tabuleiro e todas as suas funções
 class Board:
