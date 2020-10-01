@@ -13,6 +13,8 @@ class ChessMatch:
         self.__current_player = 'WHITE'
         self.__pieces_on_the_board = []
         self.__captured_pieces = []
+        self.__turn_move = []
+        self.__match_moves = []
         self.__check = False
         self.__checkmate = False
         self.__draw = False
@@ -29,6 +31,10 @@ class ChessMatch:
     @property
     def current_player(self):
         return self.__current_player
+
+    @property
+    def match_moves(self):
+        return self.__match_moves
 
     # Getter do atributo check
     @property
@@ -78,6 +84,9 @@ class ChessMatch:
 
     # Função que retorna a peça capturada pelo movimento
     def perform_chess_move(self, source_position, target_position):
+        if self.__current_player == 'WHITE':
+            self.__turn_move = []
+
         source = source_position._to_position()
         target = target_position._to_position()
         self.__validate_source_position(source)
@@ -85,21 +94,55 @@ class ChessMatch:
         captured_piece = self.__make_move(source, target)
         moved_piece = self.__board.piece(target.row, target.column)
 
-        if self.__test_check(self.__current_player):
-            self.__undo_move(source, target, captured_piece)
-            raise ChessException('O seu rei está em check')
-
-        self.__check = True if self.__test_check(self.__opponent_color(self.__current_player)) else False
-
-        # Movimento especial promoção
+         # Movimento especial promoção
         self.__promoted = None
         if isinstance(moved_piece, Pawn.Pawn):
             if (moved_piece.color == 'WHITE' and target.row == 0) or (moved_piece.color == 'BLACK' and target.row == 7):
                 self.__promoted = self.__board.piece(target.row, target.column)
                 self.__promoted = self.replace_promoted_piece('Q')
 
+        if self.__test_check(self.__current_player):
+            self.__undo_move(source, target, captured_piece)
+            raise ChessException('O seu rei está em check')
+
+        self.__check = True if self.__test_check(self.__opponent_color(self.__current_player)) else False
+
+        # Cria a lista de movimentos da partida
+        # Apenas movimentação
+        if captured_piece == None:
+            if self.__promoted != None:
+                self.__turn_move.append(str(target_position) + str(self.__promoted).upper())
+            elif isinstance(moved_piece, Pawn.Pawn):
+                self.__turn_move.append(str(source_position))
+            # Rook pelo lado do rei
+            elif isinstance(moved_piece, King.King) and target.column - source.column == 2:
+                self.__turn_move.append('O-O')
+            # Rook pelo lado da rainha
+            elif isinstance(moved_piece, King.King) and target.column - source.column == -2:
+                self.__turn_move.append('O-O-O')
+            else:
+                self.__turn_move.append(str(moved_piece).upper() + str(source_position))
+
+            # Se estiver em check, o movimento que ocasionou deve ser adicionado um + no final
+            if self.__check:
+                self.__turn_move[len(self.__turn_move) - 1] += '+'
+        # Capturas
+        elif captured_piece != None:
+            if isinstance(moved_piece, Pawn.Pawn):
+                self.__turn_move.append(str(source_position.column) + 'x' + str(target_position))
+            else:
+                self.__turn_move.append(str(moved_piece) + 'x' + str(target_position))
+
+        if self.__current_player == 'BLACK':
+            self.__match_moves.append(self.__turn_move)
+
+        # Testa check e checkmate
         if self.__test_checkmate(self.__opponent_color(self.__current_player)):
             self.__checkmate = True
+            self.__turn_move[len(self.__turn_move) - 1] += '+'
+
+            if len(self.__turn_move) == 1:
+                self.__match_moves.append(self.__turn_move)
         elif self.__test_draw():
             self.__draw = True
         else:
@@ -282,26 +325,27 @@ class ChessMatch:
                 if isinstance(p, Knight.Knight) or isinstance(p, Bishop.Bishop):
                     return True
         elif len(self.__pieces_on_the_board) == 2:
+            print('teste')
             return True
-
-        # Afogamento
-        for p in self.__pieces_on_the_board:
-            if p.color == self.__opponent_color(self.__current_player):
-                if p.is_there_any_possible_move() and not isinstance(p, King.King):
-                    return False
-                elif isinstance(p, King.King):
-                    mat = p.possible_moves()
-                    for i in range(len(mat)):
-                        for j in range(len(mat)):
-                            if mat[i][j]:
-                                source = p.chess_position()._to_position()
-                                target = Position(i, j)
-                                captured_piece = self.__make_move(source, target)
-                                test_check = self.__test_check(self.__opponent_color(self.__current_player))
-                                self.__undo_move(source, target, captured_piece)
-                                if not test_check:
-                                    return False
-                return True
+        else:
+            # Afogamento
+            for p in self.__pieces_on_the_board:
+                if p.color == self.__opponent_color(self.__current_player):
+                    if p.is_there_any_possible_move() and not isinstance(p, King.King):
+                        return False
+                    elif isinstance(p, King.King):
+                        mat = p.possible_moves()
+                        for i in range(len(mat)):
+                            for j in range(len(mat)):
+                                if mat[i][j]:
+                                    source = p.chess_position()._to_position()
+                                    target = Position(i, j)
+                                    captured_piece = self.__make_move(source, target)
+                                    test_check = self.__test_check(self.__opponent_color(self.__current_player))
+                                    self.__undo_move(source, target, captured_piece)
+                                    if not test_check:
+                                        return False
+            return True
         return False
 
     # Setup inicial do tabuleiro
