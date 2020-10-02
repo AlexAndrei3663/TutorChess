@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 from .ChessPosition import ChessPosition
-from boardgame.Piece import Piece
+from chessGame.boardgame.Piece import Piece
 
 # Classe peça que é visível para o jogador
 class ChessPiece(Piece, ABC):

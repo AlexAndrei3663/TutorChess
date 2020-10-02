@@ -1,6 +1,6 @@
 from . import Rook
 from .. import ChessPiece
-from boardgame.Position import Position
+from chessGame.boardgame.Position import Position
 
 class King(ChessPiece.ChessPiece):
 

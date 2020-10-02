@@ -1,5 +1,5 @@
 from .ChessException import ChessException
-from boardgame.Position import Position
+from chessGame.boardgame.Position import Position
 
 class ChessPosition:
 

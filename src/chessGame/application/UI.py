@@ -1,4 +1,4 @@
-from chess.ChessPosition import ChessPosition
+from chessGame.chess.ChessPosition import ChessPosition
 
 class UI:
 

@@ -1,5 +1,5 @@
 from .. import ChessPiece
-from boardgame.Position import Position
+from chessGame.boardgame.Position import Position
 
 class Pawn(ChessPiece.ChessPiece):
 

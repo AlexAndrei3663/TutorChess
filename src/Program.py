@@ -1,5 +1,5 @@
-from chess import ChessException, ChessMatch
-from application.UI import UI
+from chessGame.chess import ChessException, ChessMatch
+from chessGame.application.UI import UI
 
 def main():
     tabuleiro = ChessMatch.ChessMatch()

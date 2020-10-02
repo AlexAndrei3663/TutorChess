@@ -1,7 +1,7 @@
 from .ChessException import ChessException
 from .pieces import Bishop, King, Knight, Pawn, Queen, Rook
-from boardgame.Position import Position
-from boardgame.Board import Board
+from chessGame.boardgame.Position import Position
+from chessGame.boardgame.Board import Board
 from .ChessPosition import ChessPosition
 
 # Tabuleiro visível ao jogador
