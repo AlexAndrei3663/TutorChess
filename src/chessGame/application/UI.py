@@ -1,4 +1,5 @@
 from chessGame.chess.ChessPosition import ChessPosition
+from estruturasDeDados import ListaDuplamenteEncadeada as Lista
 
 class UI:
 
@@ -23,20 +24,20 @@ class UI:
     # Printa o Tabuleiro
     @staticmethod
     def print_board(pieces):
-        for i in range(len(pieces)):
+        for i in range(pieces.tamanho):
             print(f'{(8 - i)} ', end='')
-            for j in range(len(pieces)):
-                UI.print_piece(pieces[i][j], False)
+            for j in range(pieces.tamanho):
+                UI.print_piece(pieces.retorna_elemento(i).retorna_elemento(j), False)
             print()
         print('  a b c d e f g h')
 
     # Printa o Tabuleiro com os movimentos da peça selecionada
     @staticmethod
     def print_board_with_moviments(pieces, possible_moves):
-        for i in range(len(pieces)):
+        for i in range(pieces.tamanho):
             print(f'{(8 - i)} ', end='')
-            for j in range(len(pieces)):
-                UI.print_piece(pieces[i][j], possible_moves[i][j])
+            for j in range(pieces.tamanho):
+                UI.print_piece(pieces.retorna_elemento(i).retorna_elemento(j), possible_moves.retorna_elemento(i).retorna_elemento(j))
             print()
         print('  a b c d e f g h')
 

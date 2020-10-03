@@ -1,4 +1,6 @@
 from .BoardException import BoardException
+from estruturasDeDados import ListaDuplamenteEncadeada as Lista
+import copy
 
 # Classe responsável por armazenar as peças do tabuleiro e todas as suas funções
 class Board:
@@ -8,7 +10,7 @@ class Board:
             raise BoardException('Error criando Board, é necessário ao menos 1 linha e 1 coluna')
         self.__rows = rows
         self.__columns = columns
-        self.__pieces = [[None]*columns, [None]*columns, [None]*columns, [None]*columns, [None]*columns, [None]*columns, [None]*columns, [None]*columns] #*rows #
+        self.__pieces = Lista.Lista(8, copy.copy(Lista.Lista(8)))
 
     # Getter do atributo rows
     @property
@@ -24,7 +26,7 @@ class Board:
     def piece(self, row, column):
         if not self.is_position_exists(row, column):
             raise BoardException('Posição inexistente')
-        return self.__pieces[row][column]
+        return self.__pieces.retorna_elemento(row).retorna_elemento(column)
 
     # Checa no tabuleiro se a position passada esta entre 0 e 7 (8 posições)
     def is_position_exists(self, row, column):
@@ -40,7 +42,7 @@ class Board:
     def place_piece(self, piece, position):
         if self.is_there_a_piece(position):
             raise BoardException(f'Ja existe peça na posição {position}')
-        self.__pieces[position.row][position.column] = piece
+        self.__pieces.retorna_elemento(position.row).altera_valor(piece, position.column)
         piece._position = position
 
     # Remove peça do tabuleiro
@@ -51,5 +53,5 @@ class Board:
             return None
         aux = self.piece(position.row, position.column)
         aux._position = None
-        self.__pieces[position.row][position.column] = None
+        self.__pieces.retorna_elemento(position.row).altera_valor(None, position.column)
         return aux

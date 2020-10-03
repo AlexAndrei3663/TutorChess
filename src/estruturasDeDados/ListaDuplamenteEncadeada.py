@@ -1,3 +1,5 @@
+import copy
+
 class No:
     # Construtor da classe Nó
     def __init__(self, valor):
@@ -36,28 +38,29 @@ class Lista:
     def tamanho(self):
         return self.__tamanho
 
-    def __initial_lista(self, tamanho, valor_inicial = None):
+    def __initial_lista(self, tamanho, valor_inicial):
         if tamanho < 0:
             print('Erro')
             return
 
         for _ in range(tamanho):
-            self.insere_final(valor_inicial)
+            self.insere_final(copy.deepcopy(valor_inicial))
 
     # Retorna se a lista está vazia
     def __lista_vazia(self):
         return self.__primeiro == None
 
     # Função que altera o valor do nó
-    def altera_valor(self, indice, valor):
+    def altera_valor(self, valor, indice):
         if indice > self.__tamanho or indice < 0:
             print('Erro, elemento fora do array')
             return
 
         node = self.__primeiro
         elemento = 0
-        while node != None and elemento != indice:
+        while elemento != indice:
             node = node.proximo
+            elemento += 1
         node.valor = valor
 
     # Insere um termo em cima dos outros (no inicio da lista) O(1)
