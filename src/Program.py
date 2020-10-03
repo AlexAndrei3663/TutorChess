@@ -1,5 +1,5 @@
-from chess import ChessException, ChessMatch
-from application.UI import UI
+from chessGame.chess import ChessException, ChessMatch
+from chessGame.application.UI import UI
 
 def main():
     tabuleiro = ChessMatch.ChessMatch()
@@ -13,14 +13,13 @@ def main():
             UI.print_board_with_moviments(tabuleiro.pieces(), mat)
             print()
             target = UI.read_chess_position('Target: ')
-            captured_piece = tabuleiro.perform_chess_move(source, target)
+            tabuleiro.perform_chess_move(source, target)
 
             if tabuleiro.promoted != None:
-                type = str(input('Digite a peça para promoção (B/N/R/Q): '))
+                type = str(input('Digite a peça para promoção (B/N/R/Q): ')).upper()
                 while type != 'B' and type != 'N' and type != 'R' and type != 'Q':
-                    type = str(input('Digite a peça para promoção (B/N/R/Q): '))
+                    type = str(input('Digite a peça para promoção (B/N/R/Q): ')).upper()
                 tabuleiro.replace_promoted_piece(type)
-
         except ChessException.ChessException as e:
             print(e)
         except ValueError as e:

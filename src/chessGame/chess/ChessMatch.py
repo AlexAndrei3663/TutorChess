@@ -1,8 +1,9 @@
 from .ChessException import ChessException
 from .pieces import Bishop, King, Knight, Pawn, Queen, Rook
-from boardgame.Position import Position
-from boardgame.Board import Board
+from chessGame.boardgame.Position import Position
+from chessGame.boardgame.Board import Board
 from .ChessPosition import ChessPosition
+from estruturasDeDados import ListaDuplamenteEncadeada as Lista
 
 # Tabuleiro visível ao jogador
 class ChessMatch:
@@ -11,8 +12,10 @@ class ChessMatch:
         self.__board = Board(8, 8)
         self.__turn = 1
         self.__current_player = 'WHITE'
-        self.__pieces_on_the_board = []
-        self.__captured_pieces = []
+        self.__pieces_on_the_board = Lista.Lista()
+        self.__captured_pieces = Lista.Lista()
+        self.__turn_move = Lista.Lista()
+        self.__match_moves = Lista.Lista()
         self.__check = False
         self.__checkmate = False
         self.__draw = False
@@ -29,6 +32,10 @@ class ChessMatch:
     @property
     def current_player(self):
         return self.__current_player
+
+    @property
+    def match_moves(self):
+        return self.__match_moves
 
     # Getter do atributo check
     @property
@@ -56,13 +63,13 @@ class ChessMatch:
 
     # Retorna a matriz com as peças
     def pieces(self):
-        mat = []
+        mat = Lista.Lista()
 
         for i in range(self.__board.columns):
-            row = []
+            row = Lista.Lista()
             for j in range(self.__board.columns):
-                row.append(self.__board.piece(i, j))
-            mat.append(row)
+                row.insere_final(self.__board.piece(i, j))
+            mat.insere_final(row)
         return mat
 
     # Retorna Matriz de movimentos possíveis
@@ -74,10 +81,13 @@ class ChessMatch:
     # Função para posicionar nova peça ja convertendo char/int pra int/int
     def __place_new_piece(self, column, row, piece):
         self.__board.place_piece(piece, ChessPosition(column, row)._to_position())
-        self.__pieces_on_the_board.append(piece)
+        self.__pieces_on_the_board.insere_final(piece)
 
     # Função que retorna a peça capturada pelo movimento
     def perform_chess_move(self, source_position, target_position):
+        if self.__current_player == 'WHITE':
+            self.__turn_move = Lista.Lista()
+
         source = source_position._to_position()
         target = target_position._to_position()
         self.__validate_source_position(source)
@@ -85,21 +95,55 @@ class ChessMatch:
         captured_piece = self.__make_move(source, target)
         moved_piece = self.__board.piece(target.row, target.column)
 
-        if self.__test_check(self.__current_player):
-            self.__undo_move(source, target, captured_piece)
-            raise ChessException('O seu rei está em check')
-
-        self.__check = True if self.__test_check(self.__opponent_color(self.__current_player)) else False
-
-        # Movimento especial promoção
+         # Movimento especial promoção
         self.__promoted = None
         if isinstance(moved_piece, Pawn.Pawn):
             if (moved_piece.color == 'WHITE' and target.row == 0) or (moved_piece.color == 'BLACK' and target.row == 7):
                 self.__promoted = self.__board.piece(target.row, target.column)
                 self.__promoted = self.replace_promoted_piece('Q')
 
+        if self.__test_check(self.__current_player):
+            self.__undo_move(source, target, captured_piece)
+            raise ChessException('O seu rei está em check')
+
+        self.__check = True if self.__test_check(self.__opponent_color(self.__current_player)) else False
+
+        # Cria a lista de movimentos da partida
+        # Apenas movimentação
+        if captured_piece == None:
+            if self.__promoted != None:
+                self.__turn_move.insere_final(str(target_position) + str(self.__promoted).upper())
+            elif isinstance(moved_piece, Pawn.Pawn):
+                self.__turn_move.insere_final(str(source_position))
+            # Rook pelo lado do rei
+            elif isinstance(moved_piece, King.King) and target.column - source.column == 2:
+                self.__turn_move.insere_final('O-O')
+            # Rook pelo lado da rainha
+            elif isinstance(moved_piece, King.King) and target.column - source.column == -2:
+                self.__turn_move.insere_final('O-O-O')
+            else:
+                self.__turn_move.insere_final(str(moved_piece).upper() + str(source_position))
+
+            # Se estiver em check, o movimento que ocasionou deve ser adicionado um + no final
+            if self.__check:
+                self.__turn_move[len(self.__turn_move) - 1] += '+'
+        # Capturas
+        elif captured_piece != None:
+            if isinstance(moved_piece, Pawn.Pawn):
+                self.__turn_move.insere_final(str(source_position.column) + 'x' + str(target_position))
+            else:
+                self.__turn_move.insere_final(str(moved_piece) + 'x' + str(target_position))
+
+        if self.__current_player == 'BLACK':
+            self.__match_moves.insere_final(self.__turn_move)
+
+        # Testa check e checkmate
         if self.__test_checkmate(self.__opponent_color(self.__current_player)):
             self.__checkmate = True
+            self.__turn_move[self.__turn_move.tamanho - 1] += '+'
+
+            if self.__turn_move.tamanho == 1:
+                self.__match_moves.insere_final(self.__turn_move)
         elif self.__test_draw():
             self.__draw = True
         else:
@@ -120,11 +164,11 @@ class ChessMatch:
 
         promoted_position = self.__promoted.chess_position()._to_position()
         p = self.__board.remove_piece(promoted_position)
-        self.__pieces_on_the_board.remove(p)
+        self.__pieces_on_the_board.excluir_posicao(p)
 
         new_piece = self.__new_piece(type, self.__promoted.color)
         self.__board.place_piece(new_piece, promoted_position)
-        self.__pieces_on_the_board.append(new_piece)
+        self.__pieces_on_the_board.insere_final(new_piece)
 
         return new_piece
 
@@ -160,8 +204,8 @@ class ChessMatch:
         self.__board.place_piece(p, target)
 
         if captured_piece != None:
-            self.__pieces_on_the_board.remove(captured_piece)
-            self.__captured_pieces.append(captured_piece)
+            self.__pieces_on_the_board.excluir_posicao(captured_piece)
+            self.__captured_pieces.insere_final(captured_piece)
 
         # Movimento especial rook pelo lado do rei
         if isinstance(p, King.King) and target.column == source.column + 2:
@@ -187,8 +231,8 @@ class ChessMatch:
                 else:
                     pawn_positon = Position(target.row - 1, target.column)
                 captured_piece = self.__board.remove_piece(pawn_positon)
-                self.__captured_pieces.append(captured_piece)
-                self.__pieces_on_the_board.remove(captured_piece)
+                self.__captured_pieces.insere_final(captured_piece)
+                self.__pieces_on_the_board.excluir_posicao(captured_piece)
 
         return captured_piece
 
@@ -200,8 +244,8 @@ class ChessMatch:
 
         if captured_piece != None:
             self.__board.place_piece(captured_piece, target)
-            self.__captured_pieces.remove(captured_piece)
-            self.__pieces_on_the_board.append(captured_piece)
+            self.__captured_pieces.excluir_posicao(captured_piece)
+            self.__pieces_on_the_board.insere_final(captured_piece)
 
         # Movimento especial rook pelo lado do rei
         if isinstance(p, King.King) and target.column == source.column + 2:
@@ -240,17 +284,19 @@ class ChessMatch:
 
     # Acha o Rei da cor passada
     def __king(self, color):
-        for p in self.__pieces_on_the_board:
+        for i in range(self.__pieces_on_the_board.tamanho):
+            p = self.__pieces_on_the_board.retorna_elemento(i)
             if p.color == color and isinstance(p, King.King):
                 return p
 
     # Testa pra ver se existe check
     def __test_check(self, color):
         king_position = self.__king(color).chess_position()._to_position()
-        for p in self.__pieces_on_the_board:
+        for i in range(self.__pieces_on_the_board.tamanho):
+            p = self.__pieces_on_the_board.retorna_elemento(i)
             if p.color == self.__opponent_color(color):
                 mat = p.possible_moves()
-                if mat[king_position.row][king_position.column]:
+                if mat.retorna_elemento(king_position.row).retorna_elemento(king_position.column):
                     return True
         return False
 
@@ -259,12 +305,13 @@ class ChessMatch:
         if not self.__test_check(color):
             return False
 
-        for p in self.__pieces_on_the_board:
+        for i in range(self.__pieces_on_the_board.tamanho):
+            p = self.__pieces_on_the_board.retorna_elemento(i)
             if p.color == color:
                 mat = p.possible_moves()
                 for i in range(len(mat)):
                     for j in range(len(mat)):
-                        if mat[i][j]:
+                        if mat.retorna_elemento(i).retorna_elemento(j):
                             source = p.chess_position()._to_position()
                             target = Position(i, j)
                             captured_piece = self.__make_move(source, target)
@@ -277,31 +324,34 @@ class ChessMatch:
     # Testa pra ver se existe empate
     def __test_draw(self):
         # Falta de material (B e K vs K, N e K vs K, K vs K)
-        if len(self.__pieces_on_the_board) == 3:
-            for p in self.__pieces_on_the_board:
+        if self.__pieces_on_the_board.tamanho == 3:
+            for i in range(self.__pieces_on_the_board.tamanho):
+                p = self.__pieces_on_the_board.retorna_elemento(i)
                 if isinstance(p, Knight.Knight) or isinstance(p, Bishop.Bishop):
                     return True
-        elif len(self.__pieces_on_the_board) == 2:
+        elif self.__pieces_on_the_board.tamanho == 2:
+            print('teste')
             return True
-
-        # Afogamento
-        for p in self.__pieces_on_the_board:
-            if p.color == self.__opponent_color(self.__current_player):
-                if p.is_there_any_possible_move() and not isinstance(p, King.King):
-                    return False
-                elif isinstance(p, King.King):
-                    mat = p.possible_moves()
-                    for i in range(len(mat)):
-                        for j in range(len(mat)):
-                            if mat[i][j]:
-                                source = p.chess_position()._to_position()
-                                target = Position(i, j)
-                                captured_piece = self.__make_move(source, target)
-                                test_check = self.__test_check(self.__opponent_color(self.__current_player))
-                                self.__undo_move(source, target, captured_piece)
-                                if not test_check:
-                                    return False
-                return True
+        else:
+            # Afogamento
+            for i in range(self.__pieces_on_the_board.tamanho):
+                p = self.__pieces_on_the_board.retorna_elemento(i)
+                if p.color == self.__opponent_color(self.__current_player):
+                    if p.is_there_any_possible_move() and not isinstance(p, King.King):
+                        return False
+                    elif isinstance(p, King.King):
+                        mat = p.possible_moves()
+                        for i in range(mat.tamanho):
+                            for j in range(mat.tamanho):
+                                if mat.retorna_elemento(i).retorna_elemento(j):
+                                    source = p.chess_position()._to_position()
+                                    target = Position(i, j)
+                                    captured_piece = self.__make_move(source, target)
+                                    test_check = self.__test_check(self.__opponent_color(self.__current_player))
+                                    self.__undo_move(source, target, captured_piece)
+                                    if not test_check:
+                                        return False
+            return True
         return False
 
     # Setup inicial do tabuleiro
@@ -315,13 +365,13 @@ class ChessMatch:
         self.__place_new_piece('g', 2, Pawn.Pawn(self.__board, 'WHITE', self))
         self.__place_new_piece('h', 2, Pawn.Pawn(self.__board, 'WHITE', self))
         self.__place_new_piece('a', 1, Rook.Rook(self.__board, 'WHITE'))
-        self.__place_new_piece('h', 1, Rook.Rook(self.__board, 'WHITE'))
-        self.__place_new_piece('c', 1, Bishop.Bishop(self.__board, 'WHITE'))
-        self.__place_new_piece('f', 1, Bishop.Bishop(self.__board, 'WHITE'))
         self.__place_new_piece('b', 1, Knight.Knight(self.__board, 'WHITE'))
-        self.__place_new_piece('g', 1, Knight.Knight(self.__board, 'WHITE'))
+        self.__place_new_piece('c', 1, Bishop.Bishop(self.__board, 'WHITE'))
         self.__place_new_piece('d', 1, Queen.Queen(self.__board, 'WHITE'))
         self.__place_new_piece('e', 1, King.King(self.__board, 'WHITE', self))
+        self.__place_new_piece('f', 1, Bishop.Bishop(self.__board, 'WHITE'))
+        self.__place_new_piece('g', 1, Knight.Knight(self.__board, 'WHITE'))
+        self.__place_new_piece('h', 1, Rook.Rook(self.__board, 'WHITE'))
 
         self.__place_new_piece('a', 7, Pawn.Pawn(self.__board, 'BLACK', self))
         self.__place_new_piece('b', 7, Pawn.Pawn(self.__board, 'BLACK', self))
@@ -332,10 +382,10 @@ class ChessMatch:
         self.__place_new_piece('g', 7, Pawn.Pawn(self.__board, 'BLACK', self))
         self.__place_new_piece('h', 7, Pawn.Pawn(self.__board, 'BLACK', self))
         self.__place_new_piece('a', 8, Rook.Rook(self.__board, 'BLACK'))
-        self.__place_new_piece('h', 8, Rook.Rook(self.__board, 'BLACK'))
-        self.__place_new_piece('c', 8, Bishop.Bishop(self.__board, 'BLACK'))
-        self.__place_new_piece('f', 8, Bishop.Bishop(self.__board, 'BLACK'))
         self.__place_new_piece('b', 8, Knight.Knight(self.__board, 'BLACK'))
-        self.__place_new_piece('g', 8, Knight.Knight(self.__board, 'BLACK'))
+        self.__place_new_piece('c', 8, Bishop.Bishop(self.__board, 'BLACK'))
         self.__place_new_piece('d', 8, Queen.Queen(self.__board, 'BLACK'))
         self.__place_new_piece('e', 8, King.King(self.__board, 'BLACK', self))
+        self.__place_new_piece('f', 8, Bishop.Bishop(self.__board, 'BLACK'))
+        self.__place_new_piece('g', 8, Knight.Knight(self.__board, 'BLACK'))
+        self.__place_new_piece('h', 8, Rook.Rook(self.__board, 'BLACK'))

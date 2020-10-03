@@ -1,6 +1,8 @@
 from . import Rook
 from .. import ChessPiece
-from boardgame.Position import Position
+from chessGame.boardgame.Position import Position
+from estruturasDeDados import ListaDuplamenteEncadeada as Lista
+import copy
 
 class King(ChessPiece.ChessPiece):
 
@@ -24,47 +26,47 @@ class King(ChessPiece.ChessPiece):
 
     # Sobrecarga possible_moves
     def possible_moves(self):
-        mat = [[False]*8, [False]*8, [False]*8, [False]*8, [False]*8, [False]*8, [False]*8, [False]*8]
+        mat = Lista.Lista(8, copy.copy(Lista.Lista(8, False)))
 
         # Movimentos pra cima
         p = Position(self._position.row - 1, self._position.column)
         if self.board.is_position_exists(p.row, p.column) and self.__can_move(p):
-            mat[p.row][p.column] = True
+            mat.retorna_elemento(p.row).altera_valor(True, p.column)
 
         # Movimentos pra baixo
         p = Position(self._position.row + 1, self._position.column)
         if self.board.is_position_exists(p.row, p.column) and self.__can_move(p):
-            mat[p.row][p.column] = True
+            mat.retorna_elemento(p.row).altera_valor(True, p.column)
 
         # Movimentos pra direita
         p = Position(self._position.row, self._position.column + 1)
         if self.board.is_position_exists(p.row, p.column) and self.__can_move(p):
-            mat[p.row][p.column] = True
+            mat.retorna_elemento(p.row).altera_valor(True, p.column)
 
         # Movimentos pra esquerda
         p = Position(self._position.row, self._position.column - 1)
         if self.board.is_position_exists(p.row, p.column) and self.__can_move(p):
-            mat[p.row][p.column] = True
+            mat.retorna_elemento(p.row).altera_valor(True, p.column)
 
         # Movimentos pra cima/direita
         p = Position(self._position.row - 1, self._position.column + 1)
         if self.board.is_position_exists(p.row, p.column) and self.__can_move(p):
-            mat[p.row][p.column] = True
+            mat.retorna_elemento(p.row).altera_valor(True, p.column)
 
         # Movimentos pra cima/esquerda
         p = Position(self._position.row - 1, self._position.column - 1)
         if self.board.is_position_exists(p.row, p.column) and self.__can_move(p):
-            mat[p.row][p.column] = True
+            mat.retorna_elemento(p.row).altera_valor(True, p.column)
 
         # Movimentos pra baixo/direita
         p = Position(self._position.row + 1, self._position.column + 1)
         if self.board.is_position_exists(p.row, p.column) and self.__can_move(p):
-            mat[p.row][p.column] = True
+            mat.retorna_elemento(p.row).altera_valor(True, p.column)
 
         # Movimentos pra baixo/esquerda
         p = Position(self._position.row + 1, self._position.column - 1)
         if self.board.is_position_exists(p.row, p.column) and self.__can_move(p):
-            mat[p.row][p.column] = True
+            mat.retorna_elemento(p.row).altera_valor(True, p.column)
 
         # Movimento especial Rook
         if self.move_count == 0 and not self.__chess_match.check:
@@ -82,7 +84,7 @@ class King(ChessPiece.ChessPiece):
                 p1 = Position(self._position.row, self._position.column - 1)
                 p2 = Position(self._position.row, self._position.column - 2)
                 p3 = Position(self._position.row, self._position.column - 3)
-                if self.board.piece(p1.row, p1.column) == None and self.board.piece(p2.row, p2.column) == None and self.board.piece(p3.row, p3.column):
+                if self.board.piece(p1.row, p1.column) == None and self.board.piece(p2.row, p2.column) == None and self.board.piece(p3.row, p3.column) == None:
                     mat[self._position.row][self._position.column - 2] = True
 
         return mat
