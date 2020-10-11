@@ -48,12 +48,17 @@ class Lista:
 
     # Retorna se a lista está vazia
     def __lista_vazia(self):
-        return self.__primeiro == None
+        return self.__tamanho == 0
 
     # Função que altera o valor do nó
     def altera_valor(self, valor, indice):
         if indice > self.__tamanho or indice < 0:
             print('Erro, elemento fora do array')
+            return
+
+        # Se a lista ja estiver vazia, jogar exceção
+        if self.__lista_vazia():
+            print("Erro, lista ja esta vazia")
             return
 
         node = self.__primeiro
@@ -75,7 +80,7 @@ class Lista:
         # Então o primeiro da lista vai apontar para esse novo elemento
         else:
             self.__primeiro.anterior = node
-        
+
         # Agora, esse novo elemento é o primeiro da lista
         node.proximo = self.__primeiro
         self.__primeiro = node
@@ -129,6 +134,11 @@ class Lista:
 
     # Exclução do Início O(1)
     def excluir_inicio(self):
+        # Se a lista ja estiver vazia, jogar exceção
+        if self.__lista_vazia():
+            print("Erro, lista ja esta vazia")
+            return
+
         # Criar uma variavel temporaria para guardar o primeiro elemento (vai ser apagado)
         temp = self.__primeiro
 
@@ -146,6 +156,11 @@ class Lista:
 
     # Exclui o elemento final da lista O(1)
     def excluir_final(self):
+        # Se a lista ja estiver vazia, jogar exceção
+        if self.__lista_vazia():
+            print("Erro, lista ja esta vazia")
+            return
+
         # Criar uma variavel temporaria para guardar o ultimo elemento (vai ser apagado)
         temp = self.__ultimo
 
@@ -163,6 +178,11 @@ class Lista:
     
     # Exclui o elemento na posicao O(n)
     def excluir_posicao(self, valor):
+        # Se a lista ja estiver vazia, jogar exceção
+        if self.__lista_vazia():
+            print("Erro, lista ja esta vazia")
+            return None
+
         # Elemento temporário, começa do inicio da lista
         temp = self.__primeiro
 
@@ -197,6 +217,11 @@ class Lista:
             print('Erro, elemento fora do array')
             return None
 
+        # Se a lista ja estiver vazia, jogar exceção
+        if self.__lista_vazia():
+            print("Erro, lista vazia")
+            return None
+
         node = self.__primeiro
         elemento = 0
         # Percorre os elementos até encontrar o indice
@@ -210,7 +235,6 @@ class Lista:
     def mostrar_frente(self):
         # Começar do primeiro elemento e ir até o ultimo
         atual = self.__primeiro
-
         while atual != None:
             print(atual)
             atual = atual.proximo
@@ -219,7 +243,6 @@ class Lista:
     def mostrar_tras(self):
         # Começar do ultimo elemento e ir até o primeiro
         atual = self.__ultimo
-
         while atual != None:
             print(atual)
             atual = atual.anterior

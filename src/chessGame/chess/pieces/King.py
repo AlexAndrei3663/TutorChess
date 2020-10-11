@@ -76,7 +76,7 @@ class King(ChessPiece.ChessPiece):
                 p1 = Position(self._position.row, self._position.column + 1)
                 p2 = Position(self._position.row, self._position.column + 2)
                 if self.board.piece(p1.row, p1.column) == None and self.board.piece(p2.row, p2.column) == None:
-                    mat[self._position.row][self._position.column + 2] = True
+                    mat.retorna_elemento(self._position.row).altera_valor(True, self._position.column + 2)
 
             # Rook pelo lado da rainha
             position_tower = Position(self._position.row, self._position.column - 4)
@@ -85,6 +85,6 @@ class King(ChessPiece.ChessPiece):
                 p2 = Position(self._position.row, self._position.column - 2)
                 p3 = Position(self._position.row, self._position.column - 3)
                 if self.board.piece(p1.row, p1.column) == None and self.board.piece(p2.row, p2.column) == None and self.board.piece(p3.row, p3.column) == None:
-                    mat[self._position.row][self._position.column - 2] = True
+                    mat.retorna_elemento(self._position.row).altera_valor(True, self._position.column - 2)
 
         return mat
