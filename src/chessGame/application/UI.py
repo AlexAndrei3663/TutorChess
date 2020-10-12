@@ -19,7 +19,7 @@ class UI:
         else:
             print('CHECKMATE!')
             print(f'Vencedor: {chess_match.current_player}')
-        print(chess_match.match_moves.mostrar_tras())
+        chess_match.match_moves.mostrar_tras()
 
     # Printa o Tabuleiro
     @staticmethod

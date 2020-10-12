@@ -40,8 +40,7 @@ class Lista:
 
     def __initial_lista(self, tamanho, valor_inicial):
         if tamanho < 0:
-            print('Erro')
-            return
+            raise Warning('Erro, lista vazia.')
 
         for _ in range(tamanho):
             self.insere_final(copy.deepcopy(valor_inicial))
@@ -53,13 +52,11 @@ class Lista:
     # Função que altera o valor do nó
     def altera_valor(self, valor, indice):
         if indice > self.__tamanho or indice < 0:
-            print('Erro, elemento fora do array')
-            return
+            raise IndexError('Erro, elemento fora do array.')
 
         # Se a lista ja estiver vazia, jogar exceção
         if self.__lista_vazia():
-            print("Erro, lista ja esta vazia")
-            return
+            raise Warning('Erro, lista vazia.')
 
         node = self.__primeiro
         elemento = 0
@@ -105,8 +102,7 @@ class Lista:
     # Insere valor na posição desejada O(n)
     def insere_posicao(self, valor, indice):
         if indice > self.__tamanho or indice < 0:
-            print('Erro, elemento fora do array')
-            return
+            raise IndexError('Erro, elemento fora do array.')
 
         # Valor temporário que recebe o endereço do primeiro
         temp = self.__primeiro
@@ -136,8 +132,7 @@ class Lista:
     def excluir_inicio(self):
         # Se a lista ja estiver vazia, jogar exceção
         if self.__lista_vazia():
-            print("Erro, lista ja esta vazia")
-            return
+            raise Warning('Erro, lista vazia.')
 
         # Criar uma variavel temporaria para guardar o primeiro elemento (vai ser apagado)
         temp = self.__primeiro
@@ -158,8 +153,7 @@ class Lista:
     def excluir_final(self):
         # Se a lista ja estiver vazia, jogar exceção
         if self.__lista_vazia():
-            print("Erro, lista ja esta vazia")
-            return
+            raise Warning('Erro, lista vazia.')
 
         # Criar uma variavel temporaria para guardar o ultimo elemento (vai ser apagado)
         temp = self.__ultimo
@@ -180,8 +174,7 @@ class Lista:
     def excluir_posicao(self, valor):
         # Se a lista ja estiver vazia, jogar exceção
         if self.__lista_vazia():
-            print("Erro, lista ja esta vazia")
-            return None
+            raise Warning('Erro, lista vazia.')
 
         # Elemento temporário, começa do inicio da lista
         temp = self.__primeiro
@@ -190,7 +183,7 @@ class Lista:
         while temp.valor != valor:
             # Elemento não encontrado
             if temp == None:
-                return None
+                raise Warning('Erro, valor fora da lista.')
             temp = temp.proximo
 
         # Verificar se esse termo é o primeiro da lista
@@ -214,13 +207,11 @@ class Lista:
     def retorna_elemento(self, indice):
         # Indice fora do tamanho do array
         if indice > self.__tamanho or indice < 0:
-            print('Erro, elemento fora do array')
-            return None
+            raise IndexError('Erro, elemento fora do array.')
 
         # Se a lista ja estiver vazia, jogar exceção
         if self.__lista_vazia():
-            print("Erro, lista vazia")
-            return None
+            raise Warning('Erro, lista vazia.')
 
         node = self.__primeiro
         elemento = 0
@@ -235,7 +226,7 @@ class Lista:
     def mostrar_frente(self):
         # Começar do primeiro elemento e ir até o ultimo
         atual = self.__primeiro
-        while atual != None:
+        while atual:
             print(atual)
             atual = atual.proximo
 
@@ -243,6 +234,6 @@ class Lista:
     def mostrar_tras(self):
         # Começar do ultimo elemento e ir até o primeiro
         atual = self.__ultimo
-        while atual != None:
+        while atual:
             print(atual)
             atual = atual.anterior

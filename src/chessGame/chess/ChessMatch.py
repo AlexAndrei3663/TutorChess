@@ -34,6 +34,10 @@ class ChessMatch:
         return self.__current_player
 
     @property
+    def pieces_on_the_board(self):
+        return self.__pieces_on_the_board
+
+    @property
     def match_moves(self):
         return self.__match_moves
 
