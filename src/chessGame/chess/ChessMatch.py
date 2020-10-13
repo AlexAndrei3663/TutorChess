@@ -353,14 +353,14 @@ class ChessMatch:
 
     # Setup inicial do tabuleiro
     def initial_setup(self):
-        # self.__place_new_piece('a', 2, Pawn.Pawn(self.__board, 'WHITE', self))
-        # self.__place_new_piece('b', 2, Pawn.Pawn(self.__board, 'WHITE', self))
-        # self.__place_new_piece('c', 2, Pawn.Pawn(self.__board, 'WHITE', self))
-        # self.__place_new_piece('d', 2, Pawn.Pawn(self.__board, 'WHITE', self))
-        # self.__place_new_piece('e', 2, Pawn.Pawn(self.__board, 'WHITE', self))
-        # self.__place_new_piece('f', 2, Pawn.Pawn(self.__board, 'WHITE', self))
-        # self.__place_new_piece('g', 2, Pawn.Pawn(self.__board, 'WHITE', self))
-        # self.__place_new_piece('h', 2, Pawn.Pawn(self.__board, 'WHITE', self))
+        self.__place_new_piece('a', 2, Pawn.Pawn(self.__board, 'WHITE', self))
+        self.__place_new_piece('b', 2, Pawn.Pawn(self.__board, 'WHITE', self))
+        self.__place_new_piece('c', 2, Pawn.Pawn(self.__board, 'WHITE', self))
+        self.__place_new_piece('d', 2, Pawn.Pawn(self.__board, 'WHITE', self))
+        self.__place_new_piece('e', 2, Pawn.Pawn(self.__board, 'WHITE', self))
+        self.__place_new_piece('f', 2, Pawn.Pawn(self.__board, 'WHITE', self))
+        self.__place_new_piece('g', 2, Pawn.Pawn(self.__board, 'WHITE', self))
+        self.__place_new_piece('h', 2, Pawn.Pawn(self.__board, 'WHITE', self))
         self.__place_new_piece('a', 1, Rook.Rook(self.__board, 'WHITE'))
         self.__place_new_piece('b', 1, Knight.Knight(self.__board, 'WHITE'))
         self.__place_new_piece('c', 1, Bishop.Bishop(self.__board, 'WHITE'))
