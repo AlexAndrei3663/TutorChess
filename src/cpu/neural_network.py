@@ -9,19 +9,19 @@ class conexao:
         self.peso = np.random.normal()
         self.peso_var = 0.0
 
-class Neuron:
+class neuronio:
     eta = 0.001
     alpha = 0.01
 
     def __init__(self, camada):
-        self.dendrons = []
+        self.dendronios = []
         self.erro = 0.0
         self.gradiente = 0.0
         self.saida = 0.0
         if camada is not None:
             for neuronio in camada:
                 con = conexao(neuronio)
-                self.dendrons.append(con)
+                self.dendronios.append(con)
 
     def erro_add(self, erro_num):
         self.erro = self.erro + erro_num
@@ -30,7 +30,7 @@ class Neuron:
         return math.exp(k)/(1+math.exp(k))
 
     def sigmoid_inv(self, k):
-        return k * (1.0 - k)
+        return k*(1-k)
 
     def set_erro(self, erro_num):
         self.erro = erro_num
@@ -42,22 +42,22 @@ class Neuron:
         return self.saida
 
     #Vê oq dá
-    def forward_propagation(self):
+    def propagacao_forward(self):
         saida_total = 0
-        if len(self.dendrons) == 0:
+        if len(self.dendronios) == 0:
             return
-        for dendron in self.dendrons:
-            saida_total = saida_total + dendron.neuronio.get_saida() * dendron.peso
+        for dendronio in self.dendronios:
+            saida_total = saida_total + dendronio.neuronio.get_saida() * dendronio.peso
         self.saida = self.sigmoid(saida_total)
 
     #Aprendizado
-    def back_propagation(self):
+    def propagacao_back(self):
         self.gradiente = self.erro * self.sigmoid_inv(self.saida);
-        for dendron in self.dendrons:
-            dendron.peso_var = Neuron.eta * (
-            dendron.neuronio.saida * self.gradiente) + self.alpha * dendron.peso_var;
-            dendron.peso = dendron.peso + dendron.peso_var;
-            dendron.neuronio.erro_add(dendron.peso * self.gradiente);
+        for dendronio in self.dendronios:
+            dendronio.peso_var = neuronio.eta * (
+            dendronio.neuronio.saida * self.gradiente) + self.alpha * dendronio.peso_var;
+            dendronio.peso = dendronio.peso + dendronio.peso_var;
+            dendronio.neuronio.erro_add(dendronio.peso * self.gradiente);
         self.erro = 0;
 
 class rede_neural:
@@ -67,11 +67,11 @@ class rede_neural:
             camada = []
             for i in range(neuronio_num):
                 if (len(self.camadas) == 0):
-                    camada.append(Neuron(None))
+                    camada.append(neuronio(None))
                 else:
-                    camada.append(Neuron(self.camadas[-1]))
-            camada.append(Neuron(None)) # bias neuronio
-            camada[-1].set_saida(1) # setting saida of bias neuronio as 1
+                    camada.append(neuronio(self.camadas[-1]))
+            camada.append(neuronio(None)) # bias neuronio
+            camada[-1].set_saida(1) # bias neuronio como 1
             self.camadas.append(camada)
 
     def set_entrada(self, entrada):
@@ -87,23 +87,23 @@ class rede_neural:
         erro_num = math.sqrt(erro_num)
         return erro_num
 
-    def forward_propagation(self):
+    def propagacao_forward(self):
         for camada in self.camadas[1:]:
             for neuronio in camada:
-                neuronio.forward_propagation()
+                neuronio.propagacao_forward()
 
-    def back_propagation(self, alvo):
+    def propagacao_back(self, alvo):
         for i in range(len(alvo)):
             self.camadas[-1][i].set_erro(alvo[i] - self.camadas[-1][i].get_saida())
-        for camada in self.camadas[::-1]: #reverse the order
+        for camada in self.camadas[::-1]: #inverter a ordem
             for neuronio in camada:
-                neuronio.back_propagation()
+                neuronio.propagacao_back()
 
     def get_resultado(self):
         saida = []
         for neuronio in self.camadas[-1]:
             saida.append(neuronio.get_saida())
-        saida.pop() # removing the bias neuronio
+        saida.pop() # remover o neuronio bias
         return saida
 
 def main():
@@ -112,16 +112,16 @@ def main():
     topologia.append(3)
     topologia.append(2)
     rede = rede_neural(topologia)
-    Neuron.eta = 0.09
-    Neuron.alpha = 0.015
+    neuronio.eta = 0.09
+    neuronio.alpha = 0.015
     entrada = [[0, 0], [0, 1], [1, 0], [1, 1]]
     saidas = [[0, 0], [1, 0], [1, 0], [0, 1]]
     while True:
         erro_num = 0
         for i in range(len(entrada)):
             rede.set_entrada(entrada[i])
-            rede.forward_propagation()
-            rede.back_propagation(saidas[i])
+            rede.propagacao_forward()
+            rede.propagacao_back(saidas[i])
             erro_num = erro_num + rede.get_erro(saidas[i])
         print("erro: ", erro_num)
         if erro_num<0.1:
@@ -131,7 +131,7 @@ def main():
         a = int(input("type 1st input :"))
         b = int(input("type 2nd input :"))
         rede.set_entrada([a, b])
-        rede.forward_propagation()
+        rede.propagacao_forward()
         print(rede.get_resultado())
 
 if __name__ == '__main__':
