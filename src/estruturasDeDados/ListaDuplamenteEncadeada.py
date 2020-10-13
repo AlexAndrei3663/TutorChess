@@ -77,7 +77,7 @@ class Lista:
         # Então o primeiro da lista vai apontar para esse novo elemento
         else:
             self.__primeiro.anterior = node
-
+            
         # Agora, esse novo elemento é o primeiro da lista
         node.proximo = self.__primeiro
         self.__primeiro = node
