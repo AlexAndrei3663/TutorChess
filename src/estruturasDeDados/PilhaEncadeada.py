@@ -1,46 +1,27 @@
-class No:
-    def __init__(self, valor):
-        self.valor = valor
-        self.proximo = None
+from . import ListaDuplamenteEncadeada
 
-    def mostra_no(self):
-        print(self.valor)
-
-class ListaEncadeada:
+class Pilha(ListaDuplamenteEncadeada.Lista):
     def __init__(self):
-        self.primeiro = None
+        super().__init__()
 
-    def lista_vazia(self):
-        return self.primeiro == None
-
-    def insere_inicio(self, valor):
-        novo = No(valor)
-        novo.proximo = self.primeiro
-        self.primeiro = novo
-
-    def exclui_inicio(self):
-        if self.lista_vazia():
-            print('Lista Vazia.')
-            return None
-        
-        temp = self.primeiro
-        self.primeiro = self.primeiro.proximo
-        return temp
-
-class PilhaEncadeada:
-    def __init__(self):
-        self.pilha = ListaEncadeada()
-
+    # Empilha um novo valor no topo da pilha O(1)
     def empilhar(self, valor):
-        self.pilha.insere_inicio(valor)
+        self.insere_inicio(valor)
 
-    def desempilha(self):
-        return self.pilha.exclui_inicio()
+    # Retira o valor do topo da pilha O(1)
+    # caso seja passado o segundo atributo, seram retirados n elementos O(n)
+    def desempilha(self, quantidade = 1):
+        if quantidade == 1:
+            self.excluir_inicio()
+        else:
+            for _ in range(quantidade):
+                self.excluir_inicio()
 
-    def pilha_vazia(self):
-        return self.pilha.lista_vazia()
+    # Visualiza o elemento do topo O(1)
+    def retorna_topo(self):
+        if self.tamanho == 0:
+            return None
+        return self.retorna_elemento(0)
 
-    def ver_topo(self):
-        if self.pilha_vazia():
-            return -1
-        return self.pilha.primeiro.valor
+    def altera_topo(self, valor):
+        self.altera_valor(valor, 0)

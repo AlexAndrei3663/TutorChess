@@ -4,10 +4,7 @@ from chessGame.boardgame.Position import Position
 from chessGame.boardgame.Board import Board
 from .ChessPosition import ChessPosition
 from estruturasDeDados import ListaDuplamenteEncadeada as Lista
-<<<<<<< HEAD:src/chessGame/chess/ChessMatch.py
-=======
 from estruturasDeDados import PilhaEncadeada as Pilha
->>>>>>> feature/chessGame:chessGame/chess/ChessMatch.py
 
 # Tabuleiro visível ao jogador
 class ChessMatch:
