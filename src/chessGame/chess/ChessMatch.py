@@ -237,7 +237,7 @@ class ChessMatch:
     #  Função responsável por retornar o movimento
     def __undo_move(self, source, target, captured_piece):
         p = self.__board.remove_piece(target)
-        p.increase_move_count()
+        p.decrease_move_count()
         self.__board.place_piece(p, source)
 
         if captured_piece != None:

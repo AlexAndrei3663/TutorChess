@@ -29,13 +29,13 @@ def main():
             else:
                 moviment = stockfish.get_best_move()
                 teste.append(moviment)
+                print(f'Movimento: {ChessPosition(moviment[0], int(moviment[1]))} para {ChessPosition(moviment[2], int(moviment[3]))}')
                 tabuleiro.perform_chess_move(
                     ChessPosition(moviment[0], int(moviment[1])), 
                     ChessPosition(moviment[2], int(moviment[3]))
                 )
             
             stockfish.set_position(teste)
-            print(stockfish.get_board_visual())
         except ChessException.ChessException as e:
             print(e)
         except ValueError as e:
@@ -44,4 +44,5 @@ def main():
 
 if __name__ == "__main__":
     stockfish = Stockfish("./src/cpu/stockfish_20090216_x64")
+    stockfish.set_skill_level(3)
     main()
