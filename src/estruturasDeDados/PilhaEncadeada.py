@@ -19,7 +19,7 @@ class Pilha(ListaDuplamenteEncadeada.Lista):
 
     # Visualiza o elemento do topo O(1)
     def retorna_topo(self):
-        if self.tamanho == 0:
+        if self._tamanho == 0:
             return None
         return self.retorna_elemento(0)
 

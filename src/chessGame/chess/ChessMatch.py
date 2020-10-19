@@ -282,7 +282,7 @@ class ChessMatch:
 
     # Acha o Rei da cor passada
     def __king(self, color):
-        for i in range(self.__pieces_on_the_board.tamanho):
+        for i in range(len(self.__pieces_on_the_board)):
             p = self.__pieces_on_the_board.retorna_elemento(i)
             if p.color == color and isinstance(p, King.King):
                 return p
@@ -290,7 +290,7 @@ class ChessMatch:
     # Testa pra ver se existe check
     def __test_check(self, color):
         king_position = self.__king(color).chess_position()._to_position()
-        for i in range(self.__pieces_on_the_board.tamanho):
+        for i in range(len(self.__pieces_on_the_board)):
             p = self.__pieces_on_the_board.retorna_elemento(i)
             if p.color == self.__opponent_color(color):
                 mat = p.possible_moves()
@@ -303,12 +303,12 @@ class ChessMatch:
         if not self.__test_check(color):
             return False
 
-        for i in range(self.__pieces_on_the_board.tamanho):
+        for i in range(len(self.__pieces_on_the_board)):
             p = self.__pieces_on_the_board.retorna_elemento(i)
             if p.color == color:
                 mat = p.possible_moves()
-                for i in range(mat.tamanho):
-                    for j in range(mat.tamanho):
+                for i in range(len(mat)):
+                    for j in range(len(mat)):
                         if mat.retorna_elemento(i).retorna_elemento(j):
                             source = p.chess_position()._to_position()
                             target = Position(i, j)
@@ -322,24 +322,24 @@ class ChessMatch:
     # Testa pra ver se existe empate
     def __test_draw(self):
         # Falta de material (B e K vs K, N e K vs K, K vs K)
-        if self.__pieces_on_the_board.tamanho == 3:
-            for i in range(self.__pieces_on_the_board.tamanho):
+        if len(self.__pieces_on_the_board) == 3:
+            for i in range(len(self.__pieces_on_the_board)):
                 p = self.__pieces_on_the_board.retorna_elemento(i)
                 if isinstance(p, Knight.Knight) or isinstance(p, Bishop.Bishop):
                     return True
-        elif self.__pieces_on_the_board.tamanho == 2:
+        elif len(self.__pieces_on_the_board) == 2:
             return True
         else:
             # Afogamento
-            for i in range(self.__pieces_on_the_board.tamanho):
+            for i in range(len(self.__pieces_on_the_board)):
                 p = self.__pieces_on_the_board.retorna_elemento(i)
                 if p.color == self.__opponent_color(self.__current_player):
                     if p.is_there_any_possible_move() and not isinstance(p, King.King):
                         return False
                     elif isinstance(p, King.King):
                         mat = p.possible_moves()
-                        for i in range(mat.tamanho):
-                            for j in range(mat.tamanho):
+                        for i in range(len(mat)):
+                            for j in range(len(mat)):
                                 if mat.retorna_elemento(i).retorna_elemento(j):
                                     source = p.chess_position()._to_position()
                                     target = Position(i, j)

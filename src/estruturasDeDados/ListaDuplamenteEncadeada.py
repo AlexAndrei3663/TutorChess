@@ -33,9 +33,13 @@ class Lista:
         if tamanho != 0:
             self.__initial_lista(tamanho, valor_inicial)
     
+    # len 
+    def __len__(self):
+        return self.__tamanho
+
     # Getter do atributo tamanho
     @property
-    def tamanho(self):
+    def _tamanho(self):
         return self.__tamanho
 
     def __initial_lista(self, tamanho, valor_inicial):
