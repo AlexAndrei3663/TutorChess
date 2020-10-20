@@ -44,7 +44,7 @@ class GUI:
         #self.chessboard.show(chessboard.START_PATTERN)
         self.draw_board()
         #self.draw_pieces()
-        self.info_label.config(text="   White to Start the Game  ", fg='red')
+        self.info_label.config(text="   Peças brancas para começar  ", fg='red')
 
     def draw_board(self):
         color = self.color2
@@ -70,7 +70,7 @@ class GUI:
             y0 = ((7 - self.pieces[name][0]) * self.dim_square) + int(
                 self.dim_square / 2)
             self.canvas.coords(name, x0, y0)
-        self.canvas.tag_raise("occupied")
+        self.canvas.tag_raise("Ocupado")
         self.canvas.tag_lower("area")
 
 def main(Board):
