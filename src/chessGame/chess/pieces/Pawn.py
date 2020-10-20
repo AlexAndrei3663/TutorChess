@@ -11,7 +11,7 @@ class Pawn(ChessPiece.ChessPiece):
 
     # Sobrecarga toString
     def __str__(self):
-        return 'p' if self.color == 'WHITE' else 'P'
+        return 'p' if self.color == 'BLACK' else 'P'
 
     # Sobrecarga possible_moves
     def possible_moves(self):

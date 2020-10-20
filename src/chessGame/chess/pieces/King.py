@@ -12,7 +12,7 @@ class King(ChessPiece.ChessPiece):
 
     # Sobrecarga toString
     def __str__(self):
-        return 'k' if self.color == 'WHITE' else 'K'
+        return 'k' if self.color == 'BLACK' else 'K'
 
     # Checa se é possível se movimentar
     def __can_move(self, position):

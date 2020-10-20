@@ -10,7 +10,7 @@ class Bishop(ChessPiece.ChessPiece):
 
     # Sobrecarga toString
     def __str__(self):
-        return 'b' if self.color == 'WHITE' else 'B'
+        return 'b' if self.color == 'BLACK' else 'B'
 
     # Sobrecarga possible_moves
     def possible_moves(self):
