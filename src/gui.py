@@ -20,14 +20,14 @@ class GUI:
         # Adding Top Menu
         self.menubar = tk.Menu(parent)
         self.filemenu = tk.Menu(self.menubar, tearoff=0)
-        self.filemenu.add_command(label="New Game", command=self.new_game)
-        self.menubar.add_cascade(label="File", menu=self.filemenu)
+        self.filemenu.add_command(label="Novo Jogo", command=self.new_game)
+        self.menubar.add_cascade(label="Menu", menu=self.filemenu)
         self.parent.config(menu=self.menubar)
 
         # Adding Frame
         self.btmfrm = tk.Frame(parent, height=64)
         self.info_label = tk.Label(self.btmfrm,
-                                text="   White to Start the Game  ",
+                                text="   Peças brancas para começar  ",
                                 fg=self.color2)
         self.info_label.pack(side=tk.RIGHT, padx=8, pady=5)
         self.btmfrm.pack(fill="x", side=tk.BOTTOM)
@@ -75,7 +75,7 @@ class GUI:
 
 def main(Board):
     root = tk.Tk()
-    root.title("Chess")
+    root.title("Tutor Chess")
     gui = GUI(root, Board)
     gui.draw_board()
     #gui.draw_pieces()
