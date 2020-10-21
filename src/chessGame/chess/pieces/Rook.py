@@ -8,10 +8,24 @@ class Rook(ChessPiece.ChessPiece):
     def __init__(self, board, color):
         super().__init__(board, color)
         self.__value = 500
+        self.__square_table = [
+            [  0,  0,  0,  0,  0,  0,  0,  0],
+            [  5, 10, 10, 10, 10, 10, 10,  5],
+            [ -5,  0,  0,  0,  0,  0,  0, -5],
+            [ -5,  0,  0,  0,  0,  0,  0, -5],
+            [ -5,  0,  0,  0,  0,  0,  0, -5],
+            [ -5,  0,  0,  0,  0,  0,  0, -5],
+            [ -5,  0,  0,  0,  0,  0,  0, -5],
+            [  0,  0,  0,  5,  5,  0,  0,  0]
+        ]
 
     # Sobrecarga toString
     def __str__(self):
         return 'r' if self.color == 'BLACK' else 'R'
+
+    # Sobrecarga get_evaluation
+    def get_evaluation(self, position):
+        return self.__square_table[position.row if self.color == 'WHITE' else 7 - position.row][position.column] + self.__value
 
     # Sobrecarga possible_moves
     def possible_moves(self):

@@ -161,6 +161,7 @@ class ChessMatch:
 
         return captured_piece
 
+    # Armazena a partina em formato da notação FEN
     def get_fen_notation(self):
         fen_notation = ''
         castling = ''
@@ -219,6 +220,18 @@ class ChessMatch:
         fen_notation += ' '
         fen_notation += str(self.__half_move) + ' ' + str(self.__turn)
         return fen_notation
+
+    # Calcula a vantagem do jogo
+    def calculate_evaluation(self):
+        total = 0
+
+        for i in range(len(self.__pieces_on_the_board)):
+            piece = self.__pieces_on_the_board.retorna_elemento(i)
+            if piece.color == 'WHITE':
+                total += piece.get_evaluation(piece.chess_position()._to_position())
+            else:
+                total -= piece.get_evaluation(piece.chess_position()._to_position())
+        return total / 100
 
     # Troca o peão promovido para a peça escolhida
     def replace_promoted_piece(self, type):

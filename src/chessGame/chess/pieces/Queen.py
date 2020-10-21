@@ -8,10 +8,24 @@ class Queen(ChessPiece.ChessPiece):
     def __init__(self, board, color):
         super().__init__(board, color)
         self.__value = 900
+        self.__square_table = [
+            [-20,-10,-10, -5, -5,-10,-10,-20],
+            [-10,  0,  0,  0,  0,  0,  0,-10],
+            [-10,  0,  5,  5,  5,  5,  0,-10],
+            [ -5,  0,  5,  5,  5,  5,  0, -5],
+            [  0,  0,  5,  5,  5,  5,  0, -5],
+            [-10,  5,  5,  5,  5,  5,  0,-10],
+            [-10,  0,  5,  0,  0,  0,  0,-10],
+            [-20,-10,-10, -5, -5,-10,-10,-20]
+        ]
 
     # Sobrecarga toString
     def __str__(self):
         return 'q' if self.color == 'BLACK' else 'Q'
+
+    # Sobrecarga get_evaluation
+    def get_evaluation(self, position):
+        return self.__square_table[position.row if self.color == 'WHITE' else 7 - position.row][position.column] + self.__value
 
     # Sobrecarga possible_moves
     def possible_moves(self):

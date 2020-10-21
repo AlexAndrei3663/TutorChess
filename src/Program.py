@@ -33,6 +33,7 @@ def main():
                 )
             
             stockfish.set_fen_position(tabuleiro.get_fen_notation())
+
         except ChessException.ChessException as e:
             print(e)
         except ValueError as e:

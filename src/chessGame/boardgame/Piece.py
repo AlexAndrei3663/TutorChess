@@ -19,6 +19,11 @@ class Piece(ABC):
     def possible_moves(self):
         pass
 
+     # Método abstrato a ser implementado em classes filhas
+    @abstractmethod
+    def get_evaluation(self, position):
+        pass
+
     #  Retorna True ou False para a posição passada
     def is_possible_move(self, position):
         return self.possible_moves().retorna_elemento(position.row).retorna_elemento(position.column)
