@@ -7,6 +7,7 @@ class Knight(ChessPiece.ChessPiece):
 
     def __init__(self, board, color):
         super().__init__(board, color)
+        self.__value = 320
 
     # Sobrecarga toString
     def __str__(self):

@@ -8,6 +8,7 @@ class Pawn(ChessPiece.ChessPiece):
     def __init__(self, board, color, chess_match):
         super().__init__(board, color)
         self.__chess_match = chess_match
+        self.__value = 100
 
     # Sobrecarga toString
     def __str__(self):

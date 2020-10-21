@@ -40,7 +40,6 @@ def main():
     UI.print_match(tabuleiro)
 
 if __name__ == "__main__":
-    stockfish = Stockfish("./src/cpu/stockfish_20090216_x64")
+    stockfish = Stockfish("./src/cpu/stockfish_20090216_x64", 2)
     stockfish.set_skill_level(0)
-    stockfish.set_depth(3)
     main()
