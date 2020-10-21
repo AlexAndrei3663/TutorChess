@@ -33,9 +33,13 @@ class Lista:
         if tamanho != 0:
             self.__initial_lista(tamanho, valor_inicial)
     
+    # len 
+    def __len__(self):
+        return self.__tamanho
+
     # Getter do atributo tamanho
     @property
-    def tamanho(self):
+    def _tamanho(self):
         return self.__tamanho
 
     def __initial_lista(self, tamanho, valor_inicial):
@@ -77,6 +81,7 @@ class Lista:
         # Então o primeiro da lista vai apontar para esse novo elemento
         else:
             self.__primeiro.anterior = node
+            
         # Agora, esse novo elemento é o primeiro da lista
         node.proximo = self.__primeiro
         self.__primeiro = node

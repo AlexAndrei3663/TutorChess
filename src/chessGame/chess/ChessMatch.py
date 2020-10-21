@@ -12,6 +12,7 @@ class ChessMatch:
     def __init__(self):
         self.__board = Board(8, 8)
         self.__turn = 1
+        self.__half_move = 0
         self.__current_player = 'WHITE'
         self.__pieces_on_the_board = Lista.Lista()
         self.__captured_pieces = Lista.Lista()
@@ -99,6 +100,11 @@ class ChessMatch:
         captured_piece = self.__make_move(source, target)
         moved_piece = self.__board.piece(target.row, target.column)
 
+        if isinstance(self.__board.piece(target.row, target.column), Pawn.Pawn) or captured_piece != None:
+            self.__half_move = 0
+        else:
+            self.__half_move += 1
+
          # Movimento especial promoção
         self.__promoted = None
         if isinstance(moved_piece, Pawn.Pawn):
@@ -154,6 +160,65 @@ class ChessMatch:
             self.__en_passant_vulnerable = None
 
         return captured_piece
+
+    def get_fen_notation(self):
+        fen_notation = ''
+        castling = ''
+        en_passant_move = ''
+
+        for i in range(self.__board.rows):
+            spaces = 0
+            for j in range(self.__board.columns):
+                piece = self.__board.piece(i, j)
+                if piece != None:
+                    if spaces != 0:
+                        fen_notation += str(spaces)
+                    fen_notation += str(piece)
+                    spaces = 0
+                else:
+                    spaces += 1
+                if isinstance(piece, King.King) and piece.move_count == 0 and piece.color == 'WHITE':
+                    rook = self.__board.piece(7, 0)
+                    if isinstance(rook, Rook.Rook) and rook.move_count == 0:
+                        castling = 'Q' + castling
+                    rook = self.__board.piece(7, 7)
+                    if isinstance(rook, Rook.Rook) and rook.move_count == 0:
+                        castling = 'K' + castling
+                elif isinstance(piece, King.King) and piece.move_count == 0 and piece.color == 'BLACK':
+                    rook = self.__board.piece(0, 7)
+                    if isinstance(rook, Rook.Rook) and rook.move_count == 0:
+                        castling += 'k'
+                    rook = self.__board.piece(0, 0)
+                    if isinstance(rook, Rook.Rook) and rook.move_count == 0:
+                        castling += 'q'
+                        
+            if spaces != 0:
+                fen_notation += str(spaces)
+            fen_notation += '/' if i != 7 else ' '
+
+        fen_notation += 'w' if self.__current_player == 'WHITE' else 'b'
+        fen_notation += ' '
+        fen_notation += '-' if castling == '' else castling
+        fen_notation += ' '
+
+        if self.__en_passant_vulnerable != None:
+            en_passant_position = self.__en_passant_vulnerable.chess_position()._to_position()
+            row_searched = en_passant_position.row
+            for j in range(self.__board.columns):
+                piece = self.__board.piece(row_searched, j)
+                if isinstance(piece, Pawn.Pawn) and piece.color == self.__current_player and abs(en_passant_position.column - j) == 1:
+                    if self.__current_player == 'WHITE':
+                        en_passant_move += self.__en_passant_vulnerable.chess_position().column + str(self.__en_passant_vulnerable.chess_position().row + 1)
+                    else:
+                        en_passant_move += self.__en_passant_vulnerable.chess_position().column + str(self.__en_passant_vulnerable.chess_position().row - 1)
+                    break
+        else:
+            en_passant_move += '-'
+
+        fen_notation += en_passant_move if en_passant_move != '' else '-'
+        fen_notation += ' '
+        fen_notation += str(self.__half_move) + ' ' + str(self.__turn)
+        return fen_notation
 
     # Troca o peão promovido para a peça escolhida
     def replace_promoted_piece(self, type):
@@ -237,7 +302,7 @@ class ChessMatch:
     #  Função responsável por retornar o movimento
     def __undo_move(self, source, target, captured_piece):
         p = self.__board.remove_piece(target)
-        p.increase_move_count()
+        p.decrease_move_count()
         self.__board.place_piece(p, source)
 
         if captured_piece != None:
@@ -273,7 +338,8 @@ class ChessMatch:
 
     # Próximo turno
     def __next_turn(self):
-        self.__turn += 1
+        if self.__current_player == 'BLACK':
+            self.__turn += 1
         self.__current_player = 'BLACK' if self.__current_player == 'WHITE' else 'WHITE'
 
     # Checa a cor inimiga
@@ -282,7 +348,7 @@ class ChessMatch:
 
     # Acha o Rei da cor passada
     def __king(self, color):
-        for i in range(self.__pieces_on_the_board.tamanho):
+        for i in range(len(self.__pieces_on_the_board)):
             p = self.__pieces_on_the_board.retorna_elemento(i)
             if p.color == color and isinstance(p, King.King):
                 return p
@@ -290,7 +356,7 @@ class ChessMatch:
     # Testa pra ver se existe check
     def __test_check(self, color):
         king_position = self.__king(color).chess_position()._to_position()
-        for i in range(self.__pieces_on_the_board.tamanho):
+        for i in range(len(self.__pieces_on_the_board)):
             p = self.__pieces_on_the_board.retorna_elemento(i)
             if p.color == self.__opponent_color(color):
                 mat = p.possible_moves()
@@ -303,12 +369,12 @@ class ChessMatch:
         if not self.__test_check(color):
             return False
 
-        for i in range(self.__pieces_on_the_board.tamanho):
+        for i in range(len(self.__pieces_on_the_board)):
             p = self.__pieces_on_the_board.retorna_elemento(i)
             if p.color == color:
                 mat = p.possible_moves()
-                for i in range(mat.tamanho):
-                    for j in range(mat.tamanho):
+                for i in range(len(mat)):
+                    for j in range(len(mat)):
                         if mat.retorna_elemento(i).retorna_elemento(j):
                             source = p.chess_position()._to_position()
                             target = Position(i, j)
@@ -322,24 +388,24 @@ class ChessMatch:
     # Testa pra ver se existe empate
     def __test_draw(self):
         # Falta de material (B e K vs K, N e K vs K, K vs K)
-        if self.__pieces_on_the_board.tamanho == 3:
-            for i in range(self.__pieces_on_the_board.tamanho):
+        if len(self.__pieces_on_the_board) == 3:
+            for i in range(len(self.__pieces_on_the_board)):
                 p = self.__pieces_on_the_board.retorna_elemento(i)
                 if isinstance(p, Knight.Knight) or isinstance(p, Bishop.Bishop):
                     return True
-        elif self.__pieces_on_the_board.tamanho == 2:
+        elif len(self.__pieces_on_the_board) == 2:
             return True
         else:
             # Afogamento
-            for i in range(self.__pieces_on_the_board.tamanho):
+            for i in range(len(self.__pieces_on_the_board)):
                 p = self.__pieces_on_the_board.retorna_elemento(i)
                 if p.color == self.__opponent_color(self.__current_player):
                     if p.is_there_any_possible_move() and not isinstance(p, King.King):
                         return False
                     elif isinstance(p, King.King):
                         mat = p.possible_moves()
-                        for i in range(mat.tamanho):
-                            for j in range(mat.tamanho):
+                        for i in range(len(mat)):
+                            for j in range(len(mat)):
                                 if mat.retorna_elemento(i).retorna_elemento(j):
                                     source = p.chess_position()._to_position()
                                     target = Position(i, j)

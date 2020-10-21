@@ -7,10 +7,11 @@ class Queen(ChessPiece.ChessPiece):
 
     def __init__(self, board, color):
         super().__init__(board, color)
+        self.__value = 900
 
     # Sobrecarga toString
     def __str__(self):
-        return 'q' if self.color == 'WHITE' else 'Q'
+        return 'q' if self.color == 'BLACK' else 'Q'
 
     # Sobrecarga possible_moves
     def possible_moves(self):

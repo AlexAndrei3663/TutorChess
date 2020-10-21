@@ -26,8 +26,8 @@ class Piece(ABC):
     # Checa se existe pelo menos 1 movimento possível
     def is_there_any_possible_move(self):
         mat = self.possible_moves()
-        for i in range(mat.tamanho):
-            for j in range(mat.tamanho):
+        for i in range(len(mat)):
+            for j in range(len(mat)):
                 if mat.retorna_elemento(i).retorna_elemento(j):
                     return True
         return False

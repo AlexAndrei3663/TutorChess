@@ -7,10 +7,11 @@ class Knight(ChessPiece.ChessPiece):
 
     def __init__(self, board, color):
         super().__init__(board, color)
+        self.__value = 320
 
     # Sobrecarga toString
     def __str__(self):
-        return 'n' if self.color == 'WHITE' else 'N'
+        return 'n' if self.color == 'BLACK' else 'N'
 
     # Checa se é possível se movimentar
     def __can_move(self, position):

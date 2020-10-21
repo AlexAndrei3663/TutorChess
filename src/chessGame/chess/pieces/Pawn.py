@@ -8,10 +8,11 @@ class Pawn(ChessPiece.ChessPiece):
     def __init__(self, board, color, chess_match):
         super().__init__(board, color)
         self.__chess_match = chess_match
+        self.__value = 100
 
     # Sobrecarga toString
     def __str__(self):
-        return 'p' if self.color == 'WHITE' else 'P'
+        return 'p' if self.color == 'BLACK' else 'P'
 
     # Sobrecarga possible_moves
     def possible_moves(self):
@@ -31,23 +32,23 @@ class Pawn(ChessPiece.ChessPiece):
             
             # Movimento para comer peça adversária (esquerda)
             p = Position(self._position.row - 1, self._position.column - 1)
-            if self.board.is_position_exists(p.row, p.column) and self.board.is_there_a_piece(p):
+            if self.board.is_position_exists(p.row, p.column) and self._is_there_opponent_piece(p):
                 mat.retorna_elemento(p.row).altera_valor(True, p.column)
 
             # Movimento para comer peça adversária (direita)
             p = Position(self._position.row - 1, self._position.column + 1)
-            if self.board.is_position_exists(p.row, p.column) and self.board.is_there_a_piece(p):
+            if self.board.is_position_exists(p.row, p.column) and self._is_there_opponent_piece(p):
                 mat.retorna_elemento(p.row).altera_valor(True, p.column)
 
             # Movimento especial en passant
             if self._position.row == 3:
                 left_pawn = Position(self._position.row, self._position.column - 1)
                 if self.board.is_position_exists(left_pawn.row, left_pawn.column) and self._is_there_opponent_piece(left_pawn) and self.board.piece(left_pawn.row, left_pawn.column) == self.__chess_match.en_passant_vulnerable:
-                    mat.retorna_elemento(p.row).altera_valor(True, p.column)
+                    mat.retorna_elemento(left_pawn.row - 1).altera_valor(True, left_pawn.column)
 
                 right_pawn = Position(self._position.row, self._position.column + 1)
                 if self.board.is_position_exists(right_pawn.row, right_pawn.column) and self._is_there_opponent_piece(right_pawn) and self.board.piece(right_pawn.row, right_pawn.column) == self.__chess_match.en_passant_vulnerable:
-                    mat.retorna_elemento(p.row).altera_valor(True, p.column)
+                    mat.retorna_elemento(right_pawn.row - 1).altera_valor(True, right_pawn.column)
 
         else:
             # Movimento para cima (1 casa)
@@ -63,22 +64,22 @@ class Pawn(ChessPiece.ChessPiece):
             
             # Movimento para comer peça adversária (esquerda)
             p = Position(self._position.row + 1, self._position.column - 1)
-            if self.board.is_position_exists(p.row, p.column) and self.board.is_there_a_piece(p):
+            if self.board.is_position_exists(p.row, p.column) and self._is_there_opponent_piece(p):
                 mat.retorna_elemento(p.row).altera_valor(True, p.column)
 
             # Movimento para comer peça adversária (direita)
             p = Position(self._position.row + 1, self._position.column + 1)
-            if self.board.is_position_exists(p.row, p.column) and self.board.is_there_a_piece(p):
+            if self.board.is_position_exists(p.row, p.column) and self._is_there_opponent_piece(p):
                 mat.retorna_elemento(p.row).altera_valor(True, p.column)
 
             # Movimento especial en passant
             if self._position.row == 4:
                 left_pawn = Position(self._position.row, self._position.column - 1)
                 if self.board.is_position_exists(left_pawn.row, left_pawn.column) and self._is_there_opponent_piece(left_pawn) and self.board.piece(left_pawn.row, left_pawn.column) == self.__chess_match.en_passant_vulnerable:
-                    mat.retorna_elemento(p.row).altera_valor(True, p.column)
+                    mat.retorna_elemento(left_pawn.row + 1).altera_valor(True, left_pawn.column)
 
                 right_pawn = Position(self._position.row, self._position.column + 1)
                 if self.board.is_position_exists(right_pawn.row, right_pawn.column) and self._is_there_opponent_piece(right_pawn) and self.board.piece(right_pawn.row, right_pawn.column) == self.__chess_match.en_passant_vulnerable:
-                    mat.retorna_elemento(p.row).altera_valor(True, p.column)
+                    mat.retorna_elemento(right_pawn.row + 1).altera_valor(True, right_pawn.column)
             
         return mat
