@@ -1,6 +1,7 @@
 import tkinter as tk
 from chessGame.boardgame import Board
-
+from chessGame.chess import ChessException, ChessMatch
+from estruturasDeDados import ListaDuplamenteEncadeada as Lista
 
 class GUI:
     pieces = {}
@@ -14,9 +15,12 @@ class GUI:
     columns = 8
     dim_square = 64
 
-    def __init__(self, parent, chessboard):
+    def __init__(self, parent, chessboard, ChessMatch, Lista):
+        self.ChessMatch = ChessMatch
         self.chessboard = chessboard
         self.parent = parent
+        self.tabuleiro = ChessMatch.ChessMatch()
+        self.lista = Lista
         # Adding Top Menu
         self.menubar = tk.Menu(parent)
         self.filemenu = tk.Menu(self.menubar, tearoff=0)
@@ -72,13 +76,21 @@ class GUI:
             self.canvas.coords(name, x0, y0)
         self.canvas.tag_raise("Ocupado")
         self.canvas.tag_lower("area")
+    
+    def draw_pieces(self):
+        lista = self.lista.Lista()
+        pieces = self.tabuleiro.pieces()
+        for i in range(len(pieces)):
+            for j in range(len(pieces)):
+                print(" peça")
+                print(pieces.retorna_elemento(i).retorna_elemento(j), end='')
 
 def main(Board):
     root = tk.Tk()
     root.title("Tutor Chess")
-    gui = GUI(root, Board)
+    gui = GUI(root, Board, ChessMatch, Lista)
     gui.draw_board()
-    #gui.draw_pieces()
+    gui.draw_pieces()
     root.mainloop()
 
 if __name__ == "__main__":
