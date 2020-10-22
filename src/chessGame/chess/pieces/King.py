@@ -9,8 +9,7 @@ class King(ChessPiece.ChessPiece):
     def __init__(self, board, color, chess_match):
         super().__init__(board, color)
         self.__chess_match = chess_match
-        self.__value = 20000
-
+        
     # Sobrecarga toString
     def __str__(self):
         return 'k' if self.color == 'BLACK' else 'K'
@@ -32,42 +31,42 @@ class King(ChessPiece.ChessPiece):
         # Movimentos pra cima
         p = Position(self._position.row - 1, self._position.column)
         if self.board.is_position_exists(p.row, p.column) and self.__can_move(p):
-            mat.retorna_elemento(p.row).altera_valor(True, p.column)
+            mat[p.row][p.column] = True
 
         # Movimentos pra baixo
         p = Position(self._position.row + 1, self._position.column)
         if self.board.is_position_exists(p.row, p.column) and self.__can_move(p):
-            mat.retorna_elemento(p.row).altera_valor(True, p.column)
+            mat[p.row][p.column] = True
 
         # Movimentos pra direita
         p = Position(self._position.row, self._position.column + 1)
         if self.board.is_position_exists(p.row, p.column) and self.__can_move(p):
-            mat.retorna_elemento(p.row).altera_valor(True, p.column)
+            mat[p.row][p.column] = True
 
         # Movimentos pra esquerda
         p = Position(self._position.row, self._position.column - 1)
         if self.board.is_position_exists(p.row, p.column) and self.__can_move(p):
-            mat.retorna_elemento(p.row).altera_valor(True, p.column)
+            mat[p.row][p.column] = True
 
         # Movimentos pra cima/direita
         p = Position(self._position.row - 1, self._position.column + 1)
         if self.board.is_position_exists(p.row, p.column) and self.__can_move(p):
-            mat.retorna_elemento(p.row).altera_valor(True, p.column)
+            mat[p.row][p.column] = True
 
         # Movimentos pra cima/esquerda
         p = Position(self._position.row - 1, self._position.column - 1)
         if self.board.is_position_exists(p.row, p.column) and self.__can_move(p):
-            mat.retorna_elemento(p.row).altera_valor(True, p.column)
+            mat[p.row][p.column] = True
 
         # Movimentos pra baixo/direita
         p = Position(self._position.row + 1, self._position.column + 1)
         if self.board.is_position_exists(p.row, p.column) and self.__can_move(p):
-            mat.retorna_elemento(p.row).altera_valor(True, p.column)
+            mat[p.row][p.column] = True
 
         # Movimentos pra baixo/esquerda
         p = Position(self._position.row + 1, self._position.column - 1)
         if self.board.is_position_exists(p.row, p.column) and self.__can_move(p):
-            mat.retorna_elemento(p.row).altera_valor(True, p.column)
+            mat[p.row][p.column] = True
 
         # Movimento especial Rook
         if self.move_count == 0 and not self.__chess_match.check:
@@ -77,7 +76,7 @@ class King(ChessPiece.ChessPiece):
                 p1 = Position(self._position.row, self._position.column + 1)
                 p2 = Position(self._position.row, self._position.column + 2)
                 if self.board.piece(p1.row, p1.column) == None and self.board.piece(p2.row, p2.column) == None:
-                    mat.retorna_elemento(self._position.row).altera_valor(True, self._position.column + 2)
+                    mat[self._position.row][self._position.column + 2] = True
 
             # Rook pelo lado da rainha
             position_tower = Position(self._position.row, self._position.column - 4)
@@ -86,6 +85,6 @@ class King(ChessPiece.ChessPiece):
                 p2 = Position(self._position.row, self._position.column - 2)
                 p3 = Position(self._position.row, self._position.column - 3)
                 if self.board.piece(p1.row, p1.column) == None and self.board.piece(p2.row, p2.column) == None and self.board.piece(p3.row, p3.column) == None:
-                    mat.retorna_elemento(self._position.row).altera_valor(True, self._position.column - 2)
+                    mat[self._position.row][self._position.column - 2] = True
 
         return mat

@@ -21,13 +21,13 @@ class Piece(ABC):
 
     #  Retorna True ou False para a posição passada
     def is_possible_move(self, position):
-        return self.possible_moves().retorna_elemento(position.row).retorna_elemento(position.column)
+        return self.possible_moves()[position.row][position.column]
 
     # Checa se existe pelo menos 1 movimento possível
     def is_there_any_possible_move(self):
         mat = self.possible_moves()
         for i in range(len(mat)):
             for j in range(len(mat)):
-                if mat.retorna_elemento(i).retorna_elemento(j):
+                if mat[i][j]:
                     return True
         return False

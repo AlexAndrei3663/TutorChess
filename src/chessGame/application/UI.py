@@ -5,7 +5,7 @@ class UI:
 
     # Printa o estado incial da partida (por rodada)
     @staticmethod
-    def print_match(chess_match):
+    def print_match(chess_match, stockfish):
         UI.print_board(chess_match.pieces())
         print()
         print(f'Turn: {chess_match.turn}')
@@ -19,6 +19,7 @@ class UI:
         else:
             print('CHECKMATE!')
             print(f'Vencedor: {chess_match.current_player}')
+        print(f'Evaluation: {stockfish.get_evaluation()}')
         # chess_match.match_moves.mostrar_tras()
 
     # Printa o Tabuleiro
@@ -27,7 +28,7 @@ class UI:
         for i in range(len(pieces)):
             print(f'{(8 - i)} ', end='')
             for j in range(len(pieces)):
-                UI.print_piece(pieces.retorna_elemento(i).retorna_elemento(j), False)
+                UI.print_piece(pieces[i][j], False)
             print()
         print('  a b c d e f g h')
 
@@ -37,7 +38,7 @@ class UI:
         for i in range(len(pieces)):
             print(f'{(8 - i)} ', end='')
             for j in range(len(pieces)):
-                UI.print_piece(pieces.retorna_elemento(i).retorna_elemento(j), possible_moves.retorna_elemento(i).retorna_elemento(j))
+                UI.print_piece(pieces[i][j], possible_moves[i][j])
             print()
         print('  a b c d e f g h')
 

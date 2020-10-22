@@ -26,7 +26,7 @@ class Board:
     def piece(self, row, column):
         if not self.is_position_exists(row, column):
             raise BoardException('Posição inexistente')
-        return self.__pieces.retorna_elemento(row).retorna_elemento(column)
+        return self.__pieces[row][column]
 
     # Checa no tabuleiro se a position passada esta entre 0 e 7 (8 posições)
     def is_position_exists(self, row, column):
@@ -42,7 +42,7 @@ class Board:
     def place_piece(self, piece, position):
         if self.is_there_a_piece(position):
             raise BoardException(f'Ja existe peça na posição {position}')
-        self.__pieces.retorna_elemento(position.row).altera_valor(piece, position.column)
+        self.__pieces[position.row][position.column] = piece
         piece._position = position
 
     # Remove peça do tabuleiro
@@ -53,5 +53,5 @@ class Board:
             return None
         aux = self.piece(position.row, position.column)
         aux._position = None
-        self.__pieces.retorna_elemento(position.row).altera_valor(None, position.column)
+        self.__pieces[position.row][position.column] = None
         return aux

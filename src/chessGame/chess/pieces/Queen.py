@@ -7,7 +7,6 @@ class Queen(ChessPiece.ChessPiece):
 
     def __init__(self, board, color):
         super().__init__(board, color)
-        self.__value = 900
 
     # Sobrecarga toString
     def __str__(self):
@@ -20,65 +19,65 @@ class Queen(ChessPiece.ChessPiece):
         # Movimentos pra cima
         p = Position(self._position.row - 1, self._position.column)
         while self.board.is_position_exists(p.row, p.column) and not self.board.is_there_a_piece(p):
-            mat.retorna_elemento(p.row).altera_valor(True, p.column)
+            mat[p.row][p.column] = True
             p.row -= 1
         if self.board.is_position_exists(p.row, p.column) and self._is_there_opponent_piece(p):
-            mat.retorna_elemento(p.row).altera_valor(True, p.column)
+            mat[p.row][p.column] = True
 
         # Movimentos pra baixo
         p = Position(self._position.row + 1, self._position.column)
         while self.board.is_position_exists(p.row, p.column) and not self.board.is_there_a_piece(p):
-            mat.retorna_elemento(p.row).altera_valor(True, p.column)
+            mat[p.row][p.column] = True
             p.row += 1
         if self.board.is_position_exists(p.row, p.column) and self._is_there_opponent_piece(p):
-            mat.retorna_elemento(p.row).altera_valor(True, p.column)
+            mat[p.row][p.column] = True
 
         # Movimentos pra direita
         p = Position(self._position.row, self._position.column + 1)
         while self.board.is_position_exists(p.row, p.column) and not self.board.is_there_a_piece(p):
-            mat.retorna_elemento(p.row).altera_valor(True, p.column)
+            mat[p.row][p.column] = True
             p.column += 1
         if self.board.is_position_exists(p.row, p.column) and self._is_there_opponent_piece(p):
-            mat.retorna_elemento(p.row).altera_valor(True, p.column)
+            mat[p.row][p.column] = True
 
         # Movimentos pra esquerda
         p = Position(self._position.row, self._position.column - 1)
         while self.board.is_position_exists(p.row, p.column) and not self.board.is_there_a_piece(p):
-            mat.retorna_elemento(p.row).altera_valor(True, p.column)
+            mat[p.row][p.column] = True
             p.column -= 1
         if self.board.is_position_exists(p.row, p.column) and self._is_there_opponent_piece(p):
-            mat.retorna_elemento(p.row).altera_valor(True, p.column)
+            mat[p.row][p.column] = True
 
         # Movimentos pra cima/direita
         p = Position(self._position.row - 1, self._position.column + 1)
         while self.board.is_position_exists(p.row, p.column) and not self.board.is_there_a_piece(p):
-            mat.retorna_elemento(p.row).altera_valor(True, p.column)
+            mat[p.row][p.column] = True
             p.values(p.row - 1, p.column + 1)
         if self.board.is_position_exists(p.row, p.column) and self._is_there_opponent_piece(p):
-            mat.retorna_elemento(p.row).altera_valor(True, p.column)
+            mat[p.row][p.column] = True
 
         # Movimentos pra cima/esquerda
         p = Position(self._position.row - 1, self._position.column - 1)
         while self.board.is_position_exists(p.row, p.column) and not self.board.is_there_a_piece(p):
-            mat.retorna_elemento(p.row).altera_valor(True, p.column)
+            mat[p.row][p.column] = True
             p.values(p.row - 1, p.column - 1)
         if self.board.is_position_exists(p.row, p.column) and self._is_there_opponent_piece(p):
-            mat.retorna_elemento(p.row).altera_valor(True, p.column)
+            mat[p.row][p.column] = True
 
         # Movimentos pra baixo/direita
         p = Position(self._position.row + 1, self._position.column + 1)
         while self.board.is_position_exists(p.row, p.column) and not self.board.is_there_a_piece(p):
-            mat.retorna_elemento(p.row).altera_valor(True, p.column)
+            mat[p.row][p.column] = True
             p.values(p.row + 1, p.column + 1)
         if self.board.is_position_exists(p.row, p.column) and self._is_there_opponent_piece(p):
-            mat.retorna_elemento(p.row).altera_valor(True, p.column)
+            mat[p.row][p.column] = True
 
         # Movimentos pra baixo/esquerda
         p = Position(self._position.row + 1, self._position.column - 1)
         while self.board.is_position_exists(p.row, p.column) and not self.board.is_there_a_piece(p):
-            mat.retorna_elemento(p.row).altera_valor(True, p.column)
+            mat[p.row][p.column] = True
             p.values(p.row + 1, p.column - 1)
         if self.board.is_position_exists(p.row, p.column) and self._is_there_opponent_piece(p):
-            mat.retorna_elemento(p.row).altera_valor(True, p.column)
+            mat[p.row][p.column] = True
 
         return mat
