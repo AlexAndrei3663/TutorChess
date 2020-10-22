@@ -8,25 +8,10 @@ class Pawn(ChessPiece.ChessPiece):
     def __init__(self, board, color, chess_match):
         super().__init__(board, color)
         self.__chess_match = chess_match
-        self.__value = 100
-        self.__square_table = [
-            [ 0,  0,  0,  0,  0,  0,  0,  0],
-            [50, 50, 50, 50, 50, 50, 50, 50],
-            [10, 10, 20, 30, 30, 20, 10, 10],
-            [ 5,  5, 10, 25, 25, 10,  5,  5],
-            [ 0,  0,  0, 20, 20,  0,  0,  0],
-            [ 5, -5,-10,  0,  0,-10, -5,  5],
-            [ 5, 10, 10,-20,-20, 10, 10,  5],
-            [ 0,  0,  0,  0,  0,  0,  0,  0]
-        ]
 
     # Sobrecarga toString
     def __str__(self):
         return 'p' if self.color == 'BLACK' else 'P'
-
-    # Sobrecarga get_evaluation
-    def get_evaluation(self, position):
-        return self.__square_table[position.row if self.color == 'WHITE' else 7 - position.row][position.column] + self.__value
 
     # Sobrecarga possible_moves
     def possible_moves(self):

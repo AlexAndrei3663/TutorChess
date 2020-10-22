@@ -9,18 +9,7 @@ class King(ChessPiece.ChessPiece):
     def __init__(self, board, color, chess_match):
         super().__init__(board, color)
         self.__chess_match = chess_match
-        self.__value = 20000
-        self.__square_table = [
-            [-30,-40,-40,-50,-50,-40,-40,-30],
-            [-30,-40,-40,-50,-50,-40,-40,-30],
-            [-30,-40,-40,-50,-50,-40,-40,-30],
-            [-30,-40,-40,-50,-50,-40,-40,-30],
-            [-20,-30,-30,-40,-40,-30,-30,-20],
-            [-10,-20,-20,-20,-20,-20,-20,-10],
-            [ 20, 20,  0,  0,  0,  0, 20, 20],
-            [ 20, 30, 10,  0,  0, 10, 30, 20]
-        ]
-
+        
     # Sobrecarga toString
     def __str__(self):
         return 'k' if self.color == 'BLACK' else 'K'
@@ -34,10 +23,6 @@ class King(ChessPiece.ChessPiece):
     def __test_rook(self, position):
         p = self.board.piece(position.row, position.column)
         return p != None and isinstance(p, Rook.Rook) and p.color == self.color and p.move_count == 0
-
-    # Sobrecarga get_evaluation
-    def get_evaluation(self, position):
-        return self.__square_table[position.row if self.color == 'WHITE' else 7 - position.row][position.column] + self.__value
 
     # Sobrecarga possible_moves
     def possible_moves(self):

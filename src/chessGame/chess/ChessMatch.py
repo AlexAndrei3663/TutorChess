@@ -221,18 +221,6 @@ class ChessMatch:
         fen_notation += str(self.__half_move) + ' ' + str(self.__turn)
         return fen_notation
 
-    # Calcula a vantagem do jogo
-    def calculate_evaluation(self):
-        total = 0
-
-        for i in range(len(self.__pieces_on_the_board)):
-            piece = self.__pieces_on_the_board[i]
-            if piece.color == 'WHITE':
-                total += piece.get_evaluation(piece.chess_position()._to_position())
-            else:
-                total -= piece.get_evaluation(piece.chess_position()._to_position())
-        return total / 100
-
     # Troca o peão promovido para a peça escolhida
     def replace_promoted_piece(self, type):
         if type != 'B' and type != 'N' and type != 'R' and type != 'Q':

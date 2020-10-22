@@ -7,7 +7,7 @@ def main():
     while not tabuleiro.checkmate and not tabuleiro.draw:
         try:
             if tabuleiro.current_player == 'WHITE':
-                UI.print_match(tabuleiro)
+                UI.print_match(tabuleiro, stockfish)
                 print()
                 source = UI.read_chess_position('Source: ')
                 mat = tabuleiro.possible_move(source)
@@ -31,7 +31,6 @@ def main():
                 )
 
             stockfish.set_fen_position(tabuleiro.get_fen_notation())
-            print(stockfish.get_evaluation())
 
         except ChessException.ChessException as e:
             print(e)

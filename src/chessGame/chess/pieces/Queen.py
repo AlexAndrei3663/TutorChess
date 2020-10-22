@@ -12,10 +12,6 @@ class Queen(ChessPiece.ChessPiece):
     def __str__(self):
         return 'q' if self.color == 'BLACK' else 'Q'
 
-    # Sobrecarga get_evaluation
-    def get_evaluation(self, position):
-        return self.__square_table[position.row if self.color == 'WHITE' else 7 - position.row][position.column] + self.__value
-
     # Sobrecarga possible_moves
     def possible_moves(self):
         mat = Lista.Lista(8, copy.copy(Lista.Lista(8, False)))

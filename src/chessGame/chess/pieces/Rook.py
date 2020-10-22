@@ -12,10 +12,6 @@ class Rook(ChessPiece.ChessPiece):
     def __str__(self):
         return 'r' if self.color == 'BLACK' else 'R'
 
-    # Sobrecarga get_evaluation
-    def get_evaluation(self, position):
-        return self.__square_table[position.row if self.color == 'WHITE' else 7 - position.row][position.column] + self.__value
-
     # Sobrecarga possible_moves
     def possible_moves(self):
         mat = Lista.Lista(8, copy.copy(Lista.Lista(8, False)))
