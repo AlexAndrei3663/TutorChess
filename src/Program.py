@@ -4,8 +4,6 @@ from chessGame.application.UI import UI
 from stockfish import Stockfish
 
 def main():
-    tabuleiro = ChessMatch.ChessMatch()
-
     while not tabuleiro.checkmate and not tabuleiro.draw:
         try:
             if tabuleiro.current_player == 'WHITE':
@@ -31,8 +29,9 @@ def main():
                     ChessPosition(moviment[0], int(moviment[1])), 
                     ChessPosition(moviment[2], int(moviment[3]))
                 )
-            
+
             stockfish.set_fen_position(tabuleiro.get_fen_notation())
+            print(stockfish.get_evaluation())
 
         except ChessException.ChessException as e:
             print(e)
@@ -41,6 +40,7 @@ def main():
     UI.print_match(tabuleiro)
 
 if __name__ == "__main__":
+    tabuleiro = ChessMatch.ChessMatch()
     stockfish = Stockfish("./src/cpu/stockfish_20090216_x64", 2)
     stockfish.set_skill_level(0)
     main()

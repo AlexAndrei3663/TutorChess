@@ -97,7 +97,7 @@ class ChessMatch:
         target = target_position._to_position()
         self.__validate_source_position(source)
         self.__validate_target_position(source, target)
-        captured_piece = self.__make_move(source, target)
+        captured_piece = self._make_move(source, target)
         moved_piece = self.__board.piece(target.row, target.column)
 
         if isinstance(self.__board.piece(target.row, target.column), Pawn.Pawn) or captured_piece != None:
@@ -113,10 +113,10 @@ class ChessMatch:
                 self.__promoted = self.replace_promoted_piece('Q')
 
         if self.__test_check(self.__current_player):
-            self.__undo_move(source, target, captured_piece)
+            self._undo_move(source, target, captured_piece)
             raise ChessException('O seu rei está em check')
 
-        self.__check = True if self.__test_check(self.__opponent_color(self.__current_player)) else False
+        self.__check = True if self.__test_check(self._opponent_color(self.__current_player)) else False
 
         # Cria a lista de movimentos da partida
         # Apenas movimentação
@@ -145,7 +145,7 @@ class ChessMatch:
                 self.__match_moves.empilhar(str(moved_piece) + 'x' + str(target_position))
 
         # Testa check e checkmate
-        if self.__test_checkmate(self.__opponent_color(self.__current_player)):
+        if self.__test_checkmate(self._opponent_color(self.__current_player)):
             self.__checkmate = True
             self.__match_moves.altera_topo(self.__match_moves.retorna_topo() + '+')
         elif self.__test_draw():
@@ -226,7 +226,7 @@ class ChessMatch:
         total = 0
 
         for i in range(len(self.__pieces_on_the_board)):
-            piece = self.__pieces_on_the_board.retorna_elemento(i)
+            piece = self.__pieces_on_the_board[i]
             if piece.color == 'WHITE':
                 total += piece.get_evaluation(piece.chess_position()._to_position())
             else:
@@ -273,7 +273,7 @@ class ChessMatch:
             raise ChessException('Posição impossível para a peça escolhida')
 
     # Função responsável pela movimentação
-    def __make_move(self, source, target):
+    def _make_move(self, source, target):
         p = self.__board.remove_piece(source)
         p.increase_move_count()
         captured_piece = self.__board.remove_piece(target)
@@ -313,7 +313,7 @@ class ChessMatch:
         return captured_piece
 
     #  Função responsável por retornar o movimento
-    def __undo_move(self, source, target, captured_piece):
+    def _undo_move(self, source, target, captured_piece):
         p = self.__board.remove_piece(target)
         p.decrease_move_count()
         self.__board.place_piece(p, source)
@@ -356,13 +356,13 @@ class ChessMatch:
         self.__current_player = 'BLACK' if self.__current_player == 'WHITE' else 'WHITE'
 
     # Checa a cor inimiga
-    def __opponent_color(self, color):
+    def _opponent_color(self, color):
         return 'BLACK' if color == 'WHITE' else 'WHITE'
 
     # Acha o Rei da cor passada
     def __king(self, color):
         for i in range(len(self.__pieces_on_the_board)):
-            p = self.__pieces_on_the_board.retorna_elemento(i)
+            p = self.__pieces_on_the_board[i]
             if p.color == color and isinstance(p, King.King):
                 return p
 
@@ -370,10 +370,10 @@ class ChessMatch:
     def __test_check(self, color):
         king_position = self.__king(color).chess_position()._to_position()
         for i in range(len(self.__pieces_on_the_board)):
-            p = self.__pieces_on_the_board.retorna_elemento(i)
-            if p.color == self.__opponent_color(color):
+            p = self.__pieces_on_the_board[i]
+            if p.color == self._opponent_color(color):
                 mat = p.possible_moves()
-                if mat.retorna_elemento(king_position.row).retorna_elemento(king_position.column):
+                if mat[king_position.row][king_position.column]:
                     return True
         return False
 
@@ -383,17 +383,17 @@ class ChessMatch:
             return False
 
         for i in range(len(self.__pieces_on_the_board)):
-            p = self.__pieces_on_the_board.retorna_elemento(i)
+            p = self.__pieces_on_the_board[i]
             if p.color == color:
                 mat = p.possible_moves()
-                for i in range(len(mat)):
-                    for j in range(len(mat)):
-                        if mat.retorna_elemento(i).retorna_elemento(j):
+                for j in range(len(mat)):
+                    for k in range(len(mat)):
+                        if mat[j][k]:
                             source = p.chess_position()._to_position()
-                            target = Position(i, j)
-                            captured_piece = self.__make_move(source, target)
+                            target = Position(j, k)
+                            captured_piece = self._make_move(source, target)
                             test_check = self.__test_check(color)
-                            self.__undo_move(source, target, captured_piece)
+                            self._undo_move(source, target, captured_piece)
                             if not test_check:
                                 return False
         return True
@@ -403,7 +403,7 @@ class ChessMatch:
         # Falta de material (B e K vs K, N e K vs K, K vs K)
         if len(self.__pieces_on_the_board) == 3:
             for i in range(len(self.__pieces_on_the_board)):
-                p = self.__pieces_on_the_board.retorna_elemento(i)
+                p = self.__pieces_on_the_board[i]
                 if isinstance(p, Knight.Knight) or isinstance(p, Bishop.Bishop):
                     return True
         elif len(self.__pieces_on_the_board) == 2:
@@ -411,20 +411,20 @@ class ChessMatch:
         else:
             # Afogamento
             for i in range(len(self.__pieces_on_the_board)):
-                p = self.__pieces_on_the_board.retorna_elemento(i)
-                if p.color == self.__opponent_color(self.__current_player):
+                p = self.__pieces_on_the_board[i]
+                if p.color == self._opponent_color(self.__current_player):
                     if p.is_there_any_possible_move() and not isinstance(p, King.King):
                         return False
                     elif isinstance(p, King.King):
                         mat = p.possible_moves()
-                        for i in range(len(mat)):
-                            for j in range(len(mat)):
-                                if mat.retorna_elemento(i).retorna_elemento(j):
+                        for j in range(len(mat)):
+                            for k in range(len(mat)):
+                                if mat[j][k]:
                                     source = p.chess_position()._to_position()
-                                    target = Position(i, j)
-                                    captured_piece = self.__make_move(source, target)
-                                    test_check = self.__test_check(self.__opponent_color(self.__current_player))
-                                    self.__undo_move(source, target, captured_piece)
+                                    target = Position(j, k)
+                                    captured_piece = self._make_move(source, target)
+                                    test_check = self.__test_check(self._opponent_color(self.__current_player))
+                                    self._undo_move(source, target, captured_piece)
                                     if not test_check:
                                         return False
             return True

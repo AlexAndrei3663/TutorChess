@@ -37,6 +37,14 @@ class Lista:
     def __len__(self):
         return self.__tamanho
 
+    # ex: list[index] = value
+    def __setitem__(self, index, valor):
+        self.altera_valor(valor, index)
+
+    # ex: list[index]
+    def __getitem__(self, index):
+        return self.retorna_elemento(index)
+
     # Getter do atributo tamanho
     @property
     def _tamanho(self):
