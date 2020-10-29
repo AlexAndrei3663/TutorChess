@@ -1,24 +1,23 @@
 class Node:
-    def __init__(self, data=None,  left=None, right=None):
+    def __init__(self, data=None, pos=None, left=None, right=None):
         self.data = data
+        self.pos = pos
         self.left = left
         self.right = right
         
     def __repr__(self):
-        return '{} <- {} -> {}'.format(self.left,
-                                       self.data,
-                                       self.right)
+        return f"{self.left} <- {self.data} -> {self.right}"
     
     def __str__(self):
-        return str(self.data)
+        return str(self.pos)
 
         
 class BinarySearchTree:
-    def __init__(self, data=None, node=None):
+    def __init__(self, data=None, pos=None, node=None):
         if node:
             self.root = node
         if data:
-            self.root = Node(data)
+            self.root = Node(data, pos)
         else:
             self.root = None
         
@@ -97,7 +96,7 @@ class BinarySearchTree:
         # Encontra o no mais a esquerda
         while node.left:
             node = node.left
-        return node.data
+        return node.data, node.pos
     
     def max(self, node="root"):
         """ Retorna o no com o valor maximo na arvore """
@@ -110,13 +109,15 @@ class BinarySearchTree:
         # Encontra o no mais a direita
         while node.right:
             node = node.right
-        return node.data
+        return node.data, node.pos
         
-    def insert(self, data):
+    def insert(self, data, pos):
         """ Insersao do dado na arvore """
         
         # Finaliza se não houver valor
         if data is None:
+            return
+        if pos is None:
             return
         
         # Encontra o local para alocar o dado
@@ -133,12 +134,12 @@ class BinarySearchTree:
         # Aloca o dado no local encontrado
         # Se nao houver raiz, insere na raiz
         if parent is None:
-            self.root = Node(data)
+            self.root = Node(data, pos)
         # Insere a esquerda se for menor e a direita se for maior
         elif data < parent.data:
-            parent.left = Node(data)
+            parent.left = Node(data, pos)
         else:
-            parent.right = Node(data)
+            parent.right = Node(data, pos)
             
     def search(self, data, node="root"):
         "Busca o no referente ao valor inserido"
@@ -148,7 +149,7 @@ class BinarySearchTree:
         if node == "root":
             node = self.root
         # Se nao encontrar o valor retorna None
-        if node is None:
+        elif node is None:
             return node
         # Se achar o valor, retorna seu no
         if node.data == data:
@@ -167,7 +168,7 @@ class BinarySearchTree:
         if node == "root":
             node = self.root
         
-        if node is None:
+        elif node is None:
             return node
         
         if data < node.data:
@@ -181,7 +182,7 @@ class BinarySearchTree:
                 return node.left
             else:
                 sub = self.min(node.right)
-                node.data = sub
-                node.right = self.remove(sub, node.right)
+                node.data, node.pos = sub
+                node.right = self.remove(sub[0], node.right)
         
         return node
