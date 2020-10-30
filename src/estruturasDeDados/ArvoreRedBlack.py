@@ -192,24 +192,36 @@ class RedBlackTree:
         while node.right != self.NIL_LEAF:
             node = node.right
 
-        # Verifica se ha no a esquerda
-        if node.left != self.NIL_LEAF:
-            child_left = self.max(node.left)
-            node = node.parent
-            return node.right, child_left, node
+        # Verifica se ha nó na esquerda
+        if node.parent.left != self.NIL_LEAF:
+            return node, node.parent, self.max(node.parent.left)
         else:
-            node = node.parent
-            return node.right, node, self.max(node.left)
+            return node, node.parent if node.parent.parent == None else node.parent.parent
 
-    def max(self, node=None):
+    def max(self, node):
         """ Retorna o no com o valor maximo na arvore """
-        
-        # Se não for inserido um no
-        # a raiz da arvore eh inserida como no inicial
-        if node == None:
-            node = self.root
-            
         # Encontra o no mais a direita
         while node.right != self.NIL_LEAF:
             node = node.right
+        return node
+
+    def min3(self):
+        """ Retorna os tres menores valores da arvore """
+        node = self.root
+
+        # Encontra o no mais a direita
+        while node.left != self.NIL_LEAF:
+            node = node.left
+
+        # Verifica se ha nó na esquerda
+        if node.parent.right != self.NIL_LEAF:
+            return node, node.parent, self.min(node.parent.right)
+        else:
+            return node, node.parent if node.parent.parent == None else node.parent.parent
+
+    def min(self, node):
+        """ Retorna o no com o valor menor na arvore """
+        # Encontra o no mais a direita
+        while node.left != self.NIL_LEAF:
+            node = node.left
         return node

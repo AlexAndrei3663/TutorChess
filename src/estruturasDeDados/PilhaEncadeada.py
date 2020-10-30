@@ -9,10 +9,6 @@ class Pilha(ListaDuplamenteEncadeada.Lista):
             if self.retorna_elemento(elemento) != other[elemento]:
                 return False
         return True
-    
-    def __str__(self):
-        self.mostrar_tras()
-        return ''
 
     # Empilha um novo valor no topo da pilha O(1)
     def empilhar(self, valor):

@@ -11,7 +11,7 @@ def main():
                 print()
                 UI.print_match(tabuleiro, stockfish)
                 print()
-                cpu_suggestion = Suggestion(tabuleiro)
+                Suggestion(tabuleiro)
                 print()
                 source = UI.read_chess_position('Source: ')
                 mat = tabuleiro.possible_move(source)

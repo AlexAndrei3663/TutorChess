@@ -9,10 +9,6 @@ class Suggestion:
         self.__moviment_tree = Arvore.RedBlackTree()
         self.calculate_suggestions()
 
-    @property
-    def moviment_tree(self):
-        return self.__moviment_tree
-
     def calculate_suggestions(self):
         print('Sugestões: ')
         for _ in range(5):
@@ -20,7 +16,7 @@ class Suggestion:
             new_chess_match = copy.deepcopy(self.__chess_match)
             stockfish.set_fen_position(new_chess_match.get_fen_notation())
             rounds = 0
-            while rounds < 15 and (not new_chess_match.checkmate and not new_chess_match.draw):
+            while rounds < 18 and (not new_chess_match.checkmate and not new_chess_match.draw):
                 moviment = stockfish.get_best_move()
                 captured_piece = new_chess_match.perform_chess_move(
                     ChessPosition(moviment[0], int(moviment[1])), 
@@ -29,4 +25,8 @@ class Suggestion:
                 stockfish.set_fen_position(new_chess_match.get_fen_notation())
                 rounds += 1
             self.__moviment_tree.add(stockfish.get_evaluation(1).get("value"), new_chess_match.match_moves)
-        self.__moviment_tree.inOrder()
+            
+        moviments = self.__moviment_tree.max3() if new_chess_match.current_player == 'WHITE' else self.__moviment_tree.min3()
+        for best in moviments:
+            print(f'{best.value} -> ', end = '')
+            best.data.mostrar_tras()
