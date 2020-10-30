@@ -247,5 +247,6 @@ class Lista:
         # Começar do ultimo elemento e ir até o primeiro
         atual = self.__ultimo
         while atual:
-            print(atual)
+            print(atual, end = ' ')
             atual = atual.anterior
+        print()

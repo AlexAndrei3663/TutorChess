@@ -1,13 +1,17 @@
 from chessGame.chess import ChessException, ChessMatch
 from chessGame.chess.ChessPosition import ChessPosition
 from chessGame.application.UI import UI
+from cpu.Suggestion import Suggestion
 from stockfish import Stockfish
 
 def main():
     while not tabuleiro.checkmate and not tabuleiro.draw:
         try:
             if tabuleiro.current_player == 'WHITE':
+                print()
                 UI.print_match(tabuleiro, stockfish)
+                print()
+                cpu_suggestion = Suggestion(tabuleiro)
                 print()
                 source = UI.read_chess_position('Source: ')
                 mat = tabuleiro.possible_move(source)
