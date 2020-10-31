@@ -184,19 +184,43 @@ class RedBlackTree:
                 return parent, 'L'
             return self.__find_parent(value, data, parent.left)
 
-    def max3(self):
+    def max3(self) -> (Node, Node, Node):
         """ Retorna os tres maiores valores da arvore """
         node = self.root
+        # Caso nao haja elementos na arvore
+        if node is None:
+            return self.NIL_LEAF, self.NIL_LEAF, self.NIL_LEAF
 
+        ########################### Primeiro node return sempre o max
         # Encontra o no mais a direita
         while node.right != self.NIL_LEAF:
             node = node.right
 
-        # Verifica se ha nó na esquerda
-        if node.parent.left != self.NIL_LEAF:
-            return node, node.parent, self.max(node.parent.left)
+        ########################### Segundo node return left ou parente caso nao tenha left
+        if node.left != self.NIL_LEAF:
+            node2 = self.max(node.left)
+        elif node.parent:
+            node2 = node.parent   
         else:
-            return node, node.parent if node.parent.parent == None else node.parent.parent
+            node2 = self.NIL_LEAF
+
+        ########################### Terceiro depende do caso do segundo
+        ## Testa se tem left ou parent, caso left retorna max
+        if node2.left != self.NIL_LEAF and node2 != self.NIL_LEAF:
+            node3 = self.max(node2.left)
+        elif node2.parent:
+            ## Caso parent testa se eh o mesmo que node, se for retorna parent de node
+            if node2.parent == node:
+                if node.parent:
+                    node3 = node.parent   
+                else:
+                    node3 = self.NIL_LEAF
+            else:
+                node3 = node2.parent
+        else:
+            node3 = self.NIL_LEAF
+
+        return node, node2, node3
 
     def max(self, node):
         """ Retorna o no com o valor maximo na arvore """
@@ -205,19 +229,44 @@ class RedBlackTree:
             node = node.right
         return node
 
-    def min3(self):
+    def min3(self) -> (Node, Node, Node):
         """ Retorna os tres menores valores da arvore """
         node = self.root
+        # Caso nao haja elementos na arvore
+        if node is None:
+            return self.NIL_LEAF, self.NIL_LEAF, self.NIL_LEAF
 
+        ########################### Primeiro node return sempre o min
         # Encontra o no mais a direita
         while node.left != self.NIL_LEAF:
             node = node.left
 
-        # Verifica se ha nó na esquerda
-        if node.parent.right != self.NIL_LEAF:
-            return node, node.parent, self.min(node.parent.right)
+        ########################### Segundo node return right ou parente caso nao tenha right
+        if node.right != self.NIL_LEAF:
+            node2 = self.min(node.right)
+        elif node.parent:
+            node2 = node.parent   
         else:
-            return node, node.parent if node.parent.parent == None else node.parent.parent
+            node2 = self.NIL_LEAF
+
+        ########################### Terceiro depende do caso do segundo
+        ## Testa se tem right ou parent
+        # caso right retorna min
+        if node2.right != self.NIL_LEAF and node2 != self.NIL_LEAF:
+            node3 = self.min(node2.right)
+        elif node2.parent:
+            ## Caso parent testa se eh o mesmo que node, se for retorna parent de node
+            if node2.parent == node:
+                if node.parent:
+                    node3 = node.parent   
+                else:
+                    node3 = self.NIL_LEAF
+            else:
+                node3 = node2.parent
+        else:
+            node3 = self.NIL_LEAF
+
+        return node, node2, node3
 
     def min(self, node):
         """ Retorna o no com o valor menor na arvore """
