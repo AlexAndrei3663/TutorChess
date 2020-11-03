@@ -3,6 +3,8 @@ from chessGame.chess.ChessPosition import ChessPosition
 from chessGame.application.UI import UI
 from cpu.Suggestion import Suggestion
 from stockfish import Stockfish
+import multiprocessing
+import threading
 
 def main():
     while not tabuleiro.checkmate and not tabuleiro.draw:
@@ -11,9 +13,15 @@ def main():
                 print()
                 UI.print_match(tabuleiro, stockfish)
                 print()
-                Suggestion(tabuleiro)
+                # thread = threading.Thread(target = Suggestion, args = (tabuleiro,))
+                # thread.start()
+                # proc = multiprocessing.Process(target = Suggestion, args = (tabuleiro,))
+                # proc.start()
                 print()
                 source = UI.read_chess_position('Source: ')
+                # thread.stop_thread = True
+                # thread.join(0)
+                # proc.terminate()
                 mat = tabuleiro.possible_move(source)
                 UI.print_board_with_moviments(tabuleiro.pieces(), mat)
                 print()
@@ -40,7 +48,7 @@ def main():
             print(e)
         except ValueError as e:
             print(e)
-    UI.print_match(tabuleiro)
+    UI.print_match(tabuleiro, stockfish)
 
 if __name__ == "__main__":
     tabuleiro = ChessMatch.ChessMatch()

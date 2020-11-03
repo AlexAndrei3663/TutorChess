@@ -1,4 +1,5 @@
 from chessGame.chess.ChessPosition import ChessPosition
+from cpu.Suggestion import Suggestion
 from estruturasDeDados import ListaDuplamenteEncadeada as Lista
 
 class UI:
@@ -19,7 +20,7 @@ class UI:
         else:
             print('CHECKMATE!')
             print(f'Vencedor: {chess_match.current_player}')
-        print(f'Evaluation: {stockfish.get_evaluation()}')
+        print(f'Evaluation: {Suggestion.get_eval(stockfish, chess_match.get_fen_notation())}')
         # chess_match.match_moves.mostrar_tras()
 
     # Printa o Tabuleiro
