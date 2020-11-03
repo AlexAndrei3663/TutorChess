@@ -1,7 +1,4 @@
 import tkinter as tk
-from chessGame.boardgame import Board
-from chessGame.chess import ChessException, ChessMatch
-from estruturasDeDados import ListaDuplamenteEncadeada as Lista
 
 class GUI:
     pieces = {}
@@ -15,21 +12,18 @@ class GUI:
     columns = 8
     dim_square = 64
 
-    def __init__(self, parent, chessboard, ChessMatch, Lista):
-        self.ChessMatch = ChessMatch
-        self.chessboard = chessboard
-        self.parent = parent
-        self.tabuleiro = ChessMatch.ChessMatch()
-        self.lista = Lista
+    def __init__(self): 
+        self.parent = tk.Tk()
+        self.parent.title("Tutor Chess")
         # Adding Top Menu
-        self.menubar = tk.Menu(parent)
+        self.menubar = tk.Menu(self.parent)
         self.filemenu = tk.Menu(self.menubar, tearoff=0)
         self.filemenu.add_command(label="Novo Jogo", command=self.new_game)
         self.menubar.add_cascade(label="Menu", menu=self.filemenu)
         self.parent.config(menu=self.menubar)
 
         # Adding Frame
-        self.btmfrm = tk.Frame(parent, height=64)
+        self.btmfrm = tk.Frame(self.parent, height=64)
         self.info_label = tk.Label(self.btmfrm,
                                 text="   Peças brancas para começar  ",
                                 fg=self.color2)
@@ -38,16 +32,15 @@ class GUI:
 
         canvas_width = self.columns * self.dim_square
         canvas_height = self.rows * self.dim_square
-        self.canvas = tk.Canvas(parent, width=canvas_width,
+        self.canvas = tk.Canvas(self.parent, width=canvas_width,
                                height=canvas_height)
         self.canvas.pack(padx=8, pady=8)
-        self.draw_board()
         #self.canvas.bind("<Button-1>", self.square_clicked)
 
     def new_game(self):
         #self.chessboard.show(chessboard.START_PATTERN)
         self.draw_board()
-        #self.draw_pieces()
+        self.draw_pieces()
         self.info_label.config(text="   Peças brancas para começar  ", fg='red')
 
     def draw_board(self):
@@ -76,25 +69,26 @@ class GUI:
             self.canvas.coords(name, x0, y0)
         self.canvas.tag_raise("Ocupado")
         self.canvas.tag_lower("area")
-    
-    def draw_pieces(self):
-        lista = self.lista.Lista()
-        pieces = self.tabuleiro.pieces()
+
+    def draw_pieces(self, pieces):
+        self.canvas.delete("Ocupado")
         for i in range(len(pieces)):
             for j in range(len(pieces)):
-                print(" peça")
-                print(pieces.retorna_elemento(i).retorna_elemento(j), end='')
-
-def main(Board):
-    root = tk.Tk()
-    root.title("Tutor Chess")
-    gui = GUI(root, Board, ChessMatch, Lista)
-    gui.draw_board()
-    gui.draw_pieces()
-    root.mainloop()
-
-if __name__ == "__main__":
-    game = Board
-    main(game)
-
-
+                piece = pieces[i][j]
+                if piece == None:
+                    pass
+                    # if possible_move:
+                    #     print('.', end='')
+                    # else:
+                    #     print('-', end='')
+                else:
+                    filename = "./src/pieces_image/%s%s.png" % (str(piece).lower(), piece.color.lower())
+                    piecename = "%s%s%s" % (str(piece), i, j)
+                    if filename not in self.images:
+                        self.images[filename] = tk.PhotoImage(file=filename)
+                    self.canvas.create_image(0, 0, image=self.images[filename],
+                                             tags=(piecename, "Ocupado"),
+                                             anchor="c")
+                    x0 = (j * self.dim_square) + int(self.dim_square / 2)
+                    y0 = (i * self.dim_square) + int(self.dim_square / 2)
+                    self.canvas.coords(piecename, x0, y0)

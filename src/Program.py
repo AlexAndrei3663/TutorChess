@@ -1,12 +1,15 @@
 from chessGame.chess import ChessException, ChessMatch
 from chessGame.chess.ChessPosition import ChessPosition
 from chessGame.application.UI import UI
+from chessGame.application.gui import GUI
 from stockfish import Stockfish
 
 def main():
     while not tabuleiro.checkmate and not tabuleiro.draw:
         try:
             if tabuleiro.current_player == 'WHITE':
+                gui.draw_board()
+                gui.draw_pieces(tabuleiro.pieces())
                 UI.print_match(tabuleiro, stockfish)
                 print()
                 source = UI.read_chess_position('Source: ')
@@ -31,15 +34,15 @@ def main():
                 )
 
             stockfish.set_fen_position(tabuleiro.get_fen_notation())
-
         except ChessException.ChessException as e:
             print(e)
         except ValueError as e:
             print(e)
-    UI.print_match(tabuleiro)
+    UI.print_match(tabuleiro, stockfish)
 
 if __name__ == "__main__":
     tabuleiro = ChessMatch.ChessMatch()
+    gui = GUI()
     stockfish = Stockfish("./src/cpu/stockfish_20090216_x64", 2)
     stockfish.set_skill_level(0)
     main()
