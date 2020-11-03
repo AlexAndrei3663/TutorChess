@@ -3,7 +3,6 @@ from chessGame.chess.ChessPosition import ChessPosition
 from chessGame.application.UI import UI
 from cpu.Suggestion import Suggestion
 from stockfish import Stockfish
-import multiprocessing
 import threading
 
 def main():
@@ -13,15 +12,13 @@ def main():
                 print()
                 UI.print_match(tabuleiro, stockfish)
                 print()
-                # thread = threading.Thread(target = Suggestion, args = (tabuleiro,))
-                # thread.start()
-                # proc = multiprocessing.Process(target = Suggestion, args = (tabuleiro,))
-                # proc.start()
+                cpu_suggestions = Suggestion(tabuleiro)
+                thread = threading.Thread(target = cpu_suggestions.calculate_suggestions)
+                thread.start()
                 print()
                 source = UI.read_chess_position('Source: ')
-                # thread.stop_thread = True
-                # thread.join(0)
-                # proc.terminate()
+                cpu_suggestions.terminate()
+                thread.join(0)
                 mat = tabuleiro.possible_move(source)
                 UI.print_board_with_moviments(tabuleiro.pieces(), mat)
                 print()

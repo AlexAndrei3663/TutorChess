@@ -7,8 +7,10 @@ class Suggestion:
     def __init__(self, chess_match):
         self.__chess_match = chess_match
         self.__moviment_tree = Arvore.RedBlackTree()
-        # self.stop_thread = False
-        self.calculate_suggestions()
+        self.__stop_thread = False
+
+    def terminate(self):
+        self.__stop_thread = True
 
     def calculate_suggestions(self):
         print('Sugestões: ')
@@ -16,6 +18,7 @@ class Suggestion:
             stockfish = Stockfish("./src/cpu/stockfish_20090216_x64", 3)
             new_chess_match = copy.deepcopy(self.__chess_match)
             stockfish.set_fen_position(new_chess_match.get_fen_notation())
+            new_chess_match.match_moves.limpa_pilha()
             rounds = 0
             while rounds < 18 and (not new_chess_match.checkmate and not new_chess_match.draw):
                 moviment = stockfish.get_best_move()
@@ -25,9 +28,10 @@ class Suggestion:
                 )
                 stockfish.set_fen_position(new_chess_match.get_fen_notation())
                 rounds += 1
+                
+                if self.__stop_thread:
+                    break
 
-                # if self.stop_thread:
-                #     break
             new_chess_match.match_moves.mostrar_tras()
             self.__moviment_tree.add(self.get_eval(stockfish, new_chess_match.get_fen_notation()), new_chess_match.match_moves)
             

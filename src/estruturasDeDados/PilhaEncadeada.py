@@ -32,3 +32,6 @@ class Pilha(ListaDuplamenteEncadeada.Lista):
     # Altera valor do topo O(1)
     def altera_topo(self, valor):
         self.altera_valor(valor, 0)
+
+    def limpa_pilha(self):
+        self._apaga_lista()
