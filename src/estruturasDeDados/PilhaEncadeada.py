@@ -4,6 +4,12 @@ class Pilha(ListaDuplamenteEncadeada.Lista):
     def __init__(self):
         super().__init__()
 
+    def __eq__(self, other):
+        for elemento in range(self._tamanho):
+            if self.retorna_elemento(elemento) != other[elemento]:
+                return False
+        return True
+
     # Empilha um novo valor no topo da pilha O(1)
     def empilhar(self, valor):
         self.insere_inicio(valor)
@@ -23,5 +29,9 @@ class Pilha(ListaDuplamenteEncadeada.Lista):
             return None
         return self.retorna_elemento(0)
 
+    # Altera valor do topo O(1)
     def altera_topo(self, valor):
         self.altera_valor(valor, 0)
+
+    def limpa_pilha(self):
+        self._apaga_lista()

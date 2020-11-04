@@ -2,7 +2,9 @@ from chessGame.chess import ChessException, ChessMatch
 from chessGame.chess.ChessPosition import ChessPosition
 from chessGame.application.UI import UI
 from chessGame.application.gui import GUI
+from cpu.Suggestion import Suggestion
 from stockfish import Stockfish
+import threading
 
 def main():
     while not tabuleiro.checkmate and not tabuleiro.draw:
@@ -10,9 +12,16 @@ def main():
             if tabuleiro.current_player == 'WHITE':
                 gui.draw_board()
                 gui.draw_pieces(tabuleiro.pieces())
+                print()
                 UI.print_match(tabuleiro, stockfish)
                 print()
+                cpu_suggestions = Suggestion(tabuleiro)
+                thread = threading.Thread(target = cpu_suggestions.calculate_suggestions)
+                thread.start()
+                print()
                 source = UI.read_chess_position('Source: ')
+                cpu_suggestions.terminate()
+                thread.join(0)
                 mat = tabuleiro.possible_move(source)
                 UI.print_board_with_moviments(tabuleiro.pieces(), mat)
                 print()

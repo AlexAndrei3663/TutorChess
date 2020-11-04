@@ -57,6 +57,11 @@ class Lista:
         for _ in range(tamanho):
             self.insere_final(copy.deepcopy(valor_inicial))
 
+    def _apaga_lista(self):
+        self.__primeiro = None
+        self.__ultimo = None
+        self.__tamanho = 0
+
     # Retorna se a lista está vazia
     def __lista_vazia(self):
         return self.__tamanho == 0
@@ -247,5 +252,6 @@ class Lista:
         # Começar do ultimo elemento e ir até o primeiro
         atual = self.__ultimo
         while atual:
-            print(atual)
+            print(atual, end = ' ')
             atual = atual.anterior
+        print()
