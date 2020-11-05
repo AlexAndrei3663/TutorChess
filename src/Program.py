@@ -26,7 +26,7 @@ def main():
 
 if __name__ == "__main__":
     tabuleiro = ChessMatch.ChessMatch('BLACK')
-    stockfish = Stockfish("./src/cpu/stockfish_20090216_x64", 2)
+    stockfish = Stockfish("./src/cpu/stockfish_20090216_x64")
     stockfish.set_skill_level(0)
     gui = GUI(tabuleiro, stockfish)
     main()
