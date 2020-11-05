@@ -9,7 +9,8 @@ from estruturasDeDados import PilhaEncadeada as Pilha
 # Tabuleiro visível ao jogador
 class ChessMatch:
 
-    def __init__(self):
+    def __init__(self, bot_color = None):
+        self.bot_color = bot_color
         self.__board = Board(8, 8)
         self.__turn = 1
         self.__half_move = 0

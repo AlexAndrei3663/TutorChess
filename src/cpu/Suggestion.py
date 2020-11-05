@@ -32,7 +32,7 @@ class Suggestion:
                 if self.__stop_thread:
                     break
 
-            new_chess_match.match_moves.mostrar_tras()
+            # new_chess_match.match_moves.mostrar_tras()
             self.__moviment_tree.add(self.get_eval(stockfish, new_chess_match.get_fen_notation()), new_chess_match.match_moves)
             
         moviments = self.__moviment_tree.max3() if new_chess_match.current_player == 'WHITE' else self.__moviment_tree.min3()

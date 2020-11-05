@@ -4,6 +4,8 @@ from chessGame.boardgame.Position import Position
 from chessGame.chess import ChessException, ChessMatch
 from chessGame.chess.ChessPosition import ChessPosition
 from stockfish import Stockfish
+from cpu.Suggestion import Suggestion
+import threading
 
 class GUI:
     pieces = {}
@@ -50,17 +52,21 @@ class GUI:
 
     def square_clicked(self, event):
         col_size = row_size = self.dim_square
+        # cpu_suggestions = Suggestion(self.__chess_match)
         if not self.source:
             try:
+                # cpu_suggestions.calculate_suggestions()
                 self.source = ChessPosition._from_position(Position(int(event.y / row_size), int(event.x / col_size)))
                 self.focused = self.__chess_match.possible_move(self.source)
                 self.draw_board()
             except ChessException.ChessException as e:
                 self.source = None
+                # cpu_suggestions.terminate()
                 print(e)
         else:
             try:
                 target = ChessPosition._from_position(Position(int(event.y / row_size), int(event.x / col_size)))
+                # cpu_suggestions.terminate()
                 captured_piece = self.__chess_match.perform_chess_move(self.source, target)
             except ChessException.ChessException as e:
                 print(e)
@@ -68,7 +74,7 @@ class GUI:
             self.source = None
             self.focused = None
             self.__stockfish.set_fen_position(self.__chess_match.get_fen_notation())
-            if self.__chess_match.current_player == 'BLACK':
+            if self.__chess_match.current_player == self.__chess_match.bot_color:
                 moviment = self.__stockfish.get_best_move()
                 captured_piece = self.__chess_match.perform_chess_move(
                     ChessPosition(moviment[0], int(moviment[1])), 

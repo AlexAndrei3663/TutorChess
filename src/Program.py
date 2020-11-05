@@ -7,6 +7,13 @@ from stockfish import Stockfish
 import threading
 
 def main():
+    if tabuleiro.current_player == tabuleiro.bot_color:
+        moviment = stockfish.get_best_move()
+        captured_piece = tabuleiro.perform_chess_move(
+            ChessPosition(moviment[0], int(moviment[1])), 
+            ChessPosition(moviment[2], int(moviment[3]))
+        )
+        stockfish.set_fen_position(tabuleiro.get_fen_notation())
     gui.draw_board()
     gui.draw_pieces()
     gui.parent.mainloop()
@@ -18,7 +25,7 @@ def main():
     UI.print_match(tabuleiro, stockfish)
 
 if __name__ == "__main__":
-    tabuleiro = ChessMatch.ChessMatch()
+    tabuleiro = ChessMatch.ChessMatch('BLACK')
     stockfish = Stockfish("./src/cpu/stockfish_20090216_x64", 2)
     stockfish.set_skill_level(0)
     gui = GUI(tabuleiro, stockfish)
