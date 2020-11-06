@@ -33,19 +33,45 @@ class GUI:
         self.parent.config(menu=self.menubar)
 
         # Adding Frame
-        self.btmfrm = tk.Frame(self.parent, height=64)
-        self.info_label = tk.Label(self.btmfrm, text="  Peças brancas para começar  ", fg=self.color2)
-        self.info_label.pack(side=tk.RIGHT, padx=8, pady=5)
-        self.btmfrm.pack(fill="x", side=tk.BOTTOM)
+        # self.btmfrm = tk.Frame(self.parent, height=64)
+        # self.info_label = tk.Label(self.btmfrm, text="  Peças brancas para começar  ", fg=self.color2)
+        # self.info_label.pack(side=tk.RIGHT, padx=8, pady=5)
+        # self.btmfrm.pack(fill="x", side=tk.BOTTOM)
 
-        canvas_width = self.columns * self.dim_square
-        canvas_height = self.rows * self.dim_square
-        self.canvas = tk.Canvas(self.parent, width=canvas_width, height=canvas_height)
-        self.canvas.pack(padx=8, pady=8)
-        self.canvas.bind("<Button-1>", self.square_clicked)
+        # Tabuleiro Principal
+        chess_width = self.columns * self.dim_square
+        chess_height = self.rows * self.dim_square
+        self.chess = tk.Canvas(self.parent, width=chess_width, height=chess_height)
+        self.chess.pack(padx=8, pady=8, side=tk.LEFT)
+        self.chess.bind("<Button-1>", self.square_clicked)
+
+        # Análise do Jogo
+        scrollbar = tk.Scrollbar(self.parent)
+        scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
+        self.lateral = tk.Listbox(
+            self.parent, 
+            width=39, 
+            height=16, 
+            borderwidth=2, 
+            relief="solid", 
+            yscrollcommand=scrollbar.set, 
+            font=('Times', 14)
+        )
+        self.lateral.pack(padx=8, pady=8)
+        
+        lateral_width = 350
+        lateral_height = chess_height - 350 - 28
+        self.lateral_suggestions = tk.Canvas(
+            self.parent, 
+            width=lateral_width, 
+            height=lateral_height, 
+            borderwidth=2, 
+            relief="solid"
+        )
+        self.lateral_suggestions.pack(padx=8, pady=8)
 
     def new_game(self):
-        #self.chessboard.show(chessboard.START_PATTERN)
+        self.chessboard.show(chessboard.START_PATTERN)
         self.draw_board()
         self.draw_pieces()
         self.info_label.config(text="   Peças brancas para começar  ", fg='red')
@@ -82,9 +108,16 @@ class GUI:
                 )
             self.draw_board()
             self.draw_pieces()
+        self.show_match_moves()
         if self.__chess_match.checkmate or self.__chess_match.draw:
             self.parent.quit()
-            
+
+    def show_match_moves(self):
+        self.lateral.delete(0, tk.END)
+        for i in range(1, len(self.__chess_match.match_moves), 2):
+            string = str(i) + '. ' + self.__chess_match.match_moves[i - 1] + '    ' + self.__chess_match.match_moves[i]
+            self.lateral.insert(i, string)
+
     def draw_board(self):
         color = self.color2
         for row in range(self.rows):
@@ -95,20 +128,20 @@ class GUI:
                 x2 = x1 + self.dim_square
                 y2 = y1 + self.dim_square
                 if (self.focused is not None and self.focused[row][col]):
-                    self.canvas.create_rectangle(x1, y1, x2, y2, fill=self.highlightcolor, tags="area")
+                    self.chess.create_rectangle(x1, y1, x2, y2, fill=self.highlightcolor, tags="area")
                 else:
-                    self.canvas.create_rectangle(x1, y1, x2, y2, fill=color, tags="area")
+                    self.chess.create_rectangle(x1, y1, x2, y2, fill=color, tags="area")
                 color = self.color1 if color == self.color2 else self.color2
         for name in self.pieces:
             self.pieces[name] = (self.pieces[name][0], self.pieces[name][1])
             x0 = (self.pieces[name][1] * self.dim_square) + int(self.dim_square / 2)
             y0 = ((7 - self.pieces[name][0]) * self.dim_square) + int(self.dim_square / 2)
-            self.canvas.coords(name, x0, y0)
-        self.canvas.tag_raise("Ocupado")
-        self.canvas.tag_lower("area")
+            self.chess.coords(name, x0, y0)
+        self.chess.tag_raise("Ocupado")
+        self.chess.tag_lower("area")
 
     def draw_pieces(self):
-        self.canvas.delete("Ocupado")
+        self.chess.delete("Ocupado")
         pieces = self.__chess_match.pieces()
         for i in range(len(pieces)):
             for j in range(len(pieces)):
@@ -118,7 +151,7 @@ class GUI:
                     piecename = "%s%s%s" % (str(piece), i, j)
                     if filename not in self.images:
                         self.images[filename] = tk.PhotoImage(file=filename)
-                    self.canvas.create_image(0, 0, image=self.images[filename], tags=(piecename, "Ocupado"), anchor="c")
+                    self.chess.create_image(0, 0, image=self.images[filename], tags=(piecename, "Ocupado"), anchor="c")
                     x0 = (j * self.dim_square) + int(self.dim_square / 2)
                     y0 = (i * self.dim_square) + int(self.dim_square / 2)
-                    self.canvas.coords(piecename, x0, y0)
+                    self.chess.coords(piecename, x0, y0)

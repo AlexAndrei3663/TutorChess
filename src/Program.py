@@ -25,7 +25,11 @@ def main():
     UI.print_match(tabuleiro, stockfish)
 
 if __name__ == "__main__":
-    tabuleiro = ChessMatch.ChessMatch('BLACK')
+    print('Escolha a Cor:')
+    print('[1] BRANCAS')
+    print('[2] NEGRAS')
+    player_color = int(input())
+    tabuleiro = ChessMatch.ChessMatch('BLACK' if player_color == 1 else 'WHITE')
     stockfish = Stockfish("./src/cpu/stockfish_20090216_x64")
     stockfish.set_skill_level(0)
     gui = GUI(tabuleiro, stockfish)
