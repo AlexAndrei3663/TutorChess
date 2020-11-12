@@ -11,6 +11,8 @@ class GUI:
     pieces = {}
     focused = None
     source = None
+    thread = None
+    cpu_suggestions = None
     images = {}
     color1 = "#DDB88C"
     color2 = "#A66D4F"
@@ -59,16 +61,20 @@ class GUI:
         )
         self.lateral.pack(padx=8, pady=8)
         
-        lateral_width = 350
-        lateral_height = chess_height - 350 - 28
-        self.lateral_suggestions = tk.Canvas(
+        # Sugestões de Movimentos
+        self.lateral_suggestions = tk.Listbox(
             self.parent, 
-            width=lateral_width, 
-            height=lateral_height, 
+            width=39, 
+            height=6, 
             borderwidth=2, 
-            relief="solid"
+            relief="solid", 
+            font=('Times', 14)
         )
         self.lateral_suggestions.pack(padx=8, pady=8)
+
+    def main_loop(self):
+        self.parent.update_idletasks()
+        self.parent.update()
 
     def new_game(self):
         self.chessboard.show(chessboard.START_PATTERN)
@@ -78,22 +84,21 @@ class GUI:
 
     def square_clicked(self, event):
         col_size = row_size = self.dim_square
-        # cpu_suggestions = Suggestion(self.__chess_match)
         if not self.source:
             try:
-                # cpu_suggestions.calculate_suggestions()
                 self.source = ChessPosition._from_position(Position(int(event.y / row_size), int(event.x / col_size)))
                 self.focused = self.__chess_match.possible_move(self.source)
                 self.draw_board()
             except ChessException.ChessException as e:
                 self.source = None
-                # cpu_suggestions.terminate()
                 print(e)
         else:
             try:
                 target = ChessPosition._from_position(Position(int(event.y / row_size), int(event.x / col_size)))
-                # cpu_suggestions.terminate()
                 captured_piece = self.__chess_match.perform_chess_move(self.source, target)
+                if self.thread.is_alive():
+                    self.cpu_suggestions.terminate()
+                    self.thread.join(0)
             except ChessException.ChessException as e:
                 print(e)
 
@@ -106,11 +111,31 @@ class GUI:
                     ChessPosition(moviment[0], int(moviment[1])), 
                     ChessPosition(moviment[2], int(moviment[3]))
                 )
+                self.cpu_suggestions = Suggestion(self.__chess_match)
+                self.thread = threading.Thread(target = self.cpu_suggestions.calculate_suggestions, args=(self,))
+                self.thread.start()
+                self.lateral_suggestions.delete(0, tk.END)
+                self.lateral_suggestions.insert(1, "Calculando Sugestões...")
             self.draw_board()
             self.draw_pieces()
         self.show_match_moves()
         if self.__chess_match.checkmate or self.__chess_match.draw:
+            if self.thread.is_alive():
+                self.cpu_suggestions.terminate()
+                self.thread.join(0)
             self.parent.quit()
+
+    def show_suggestions(self, suggestions):
+        self.lateral_suggestions.delete(0, tk.END)
+        self.lateral_suggestions.insert(1, "Sugestões")
+        for best in suggestions:
+            string = ''
+            if best.value == 1000.00 or best.value == -1000.00:
+                string += 'CHECK -> '
+            else:
+                string += str(best.value) + ' -> '
+            string += best.data.mostrar_frente()
+            self.lateral_suggestions.insert(tk.END, string)
 
     def show_match_moves(self):
         self.lateral.delete(0, tk.END)

@@ -14,14 +14,13 @@ def main():
             ChessPosition(moviment[2], int(moviment[3]))
         )
         stockfish.set_fen_position(tabuleiro.get_fen_notation())
+
+    gui.cpu_suggestions = Suggestion(tabuleiro)
+    gui.thread = threading.Thread(target = gui.cpu_suggestions.calculate_suggestions, args=(gui,))
+    gui.thread.start()
     gui.draw_board()
     gui.draw_pieces()
     gui.parent.mainloop()
-    # cpu_suggestions = Suggestion(tabuleiro)
-    # thread = threading.Thread(target = cpu_suggestions.calculate_suggestions)
-    # thread.start()
-    # cpu_suggestions.terminate()
-    # thread.join(0)
     UI.print_match(tabuleiro, stockfish)
 
 if __name__ == "__main__":
