@@ -43,14 +43,14 @@ class Suggestion:
             text = stockfish._read_line()
             splitted_text = text.split(" ")
             if splitted_text[0] == "Total":
-                if float(splitted_text[-1]) < 0.0:
+                if float(splitted_text[-1]) < 0.0 or float(splitted_text[-1]) >= 10.0:
                     eval = (float(splitted_text[-1]) + float(splitted_text[-2]))
                 else:
                     eval = (float(splitted_text[-1]) + float(splitted_text[-3]))
                 return float('%.2f'%eval)
             elif splitted_text[0] == "Final":
-                if splitted_text[-1] == "check)":
-                    if "w" in chess_match.get_fen_notation():
+                if chess_match.check:
+                    if chess_match.current_player == "WHITE":
                         return 1000.00
                     else:
                         return -1000.00
