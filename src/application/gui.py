@@ -34,12 +34,6 @@ class GUI:
         self.menubar.add_cascade(label="Menu", menu=self.filemenu)
         self.parent.config(menu=self.menubar)
 
-        # Adding Frame
-        # self.btmfrm = tk.Frame(self.parent, height=64)
-        # self.info_label = tk.Label(self.btmfrm, text="  Peças brancas para começar  ", fg=self.color2)
-        # self.info_label.pack(side=tk.RIGHT, padx=8, pady=5)
-        # self.btmfrm.pack(fill="x", side=tk.BOTTOM)
-
         # Tabuleiro Principal
         chess_width = self.columns * self.dim_square
         chess_height = self.rows * self.dim_square
@@ -111,11 +105,13 @@ class GUI:
                     ChessPosition(moviment[0], int(moviment[1])), 
                     ChessPosition(moviment[2], int(moviment[3]))
                 )
-                self.cpu_suggestions = Suggestion(self.__chess_match)
-                self.thread = threading.Thread(target = self.cpu_suggestions.calculate_suggestions, args=(self,))
-                self.thread.start()
-                self.lateral_suggestions.delete(0, tk.END)
-                self.lateral_suggestions.insert(1, "Calculando Sugestões...")
+                # Evita que entre em processo de threading
+                if not self.__chess_match.checkmate and not self.__chess_match.draw:
+                    self.cpu_suggestions = Suggestion(self.__chess_match)
+                    self.thread = threading.Thread(target = self.cpu_suggestions.calculate_suggestions, args=(self,))
+                    self.thread.start()
+                    self.lateral_suggestions.delete(0, tk.END)
+                    self.lateral_suggestions.insert(1, "Calculando Sugestões...")
             self.draw_board()
             self.draw_pieces()
         self.show_match_moves()
@@ -129,6 +125,8 @@ class GUI:
         self.lateral_suggestions.delete(0, tk.END)
         self.lateral_suggestions.insert(1, "Sugestões")
         for best in suggestions:
+            if best.value == None:
+                pass
             string = ''
             if best.value == 1000.00 or best.value == -1000.00:
                 string += 'CHECK -> '

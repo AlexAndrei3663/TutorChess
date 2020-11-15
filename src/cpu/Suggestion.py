@@ -37,7 +37,6 @@ class Suggestion:
 
     @staticmethod
     def get_eval(stockfish, chess_match) -> float:
-
         stockfish._put(f"position fen {chess_match.get_fen_notation()}\n eval")
         while True:
             text = stockfish._read_line()
