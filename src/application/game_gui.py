@@ -31,16 +31,16 @@ class Game:
         self.game_container = tk.Frame(self.parent)
         self.game_container.pack(padx=8, side=tk.LEFT)
 
-        # Peças Brancas Capturadas
-        self.count_white = 0
+        # Peças Pretas Capturadas
+        self.count_black = 0
         captured_width = 16 * self.dim_square / 2
-        self.captured_white = tk.Canvas(
+        self.captured_black = tk.Canvas(
             self.game_container, 
             width=captured_width, 
             height=self.dim_square/2, 
             highlightbackground="black", 
             highlightthickness=2)
-        self.captured_white.pack(pady=8, side=tk.TOP)
+        self.captured_black.pack(pady=8, side=tk.TOP)
 
         #Container tabuleiro
         self.board_container = tk.Frame(self.game_container)
