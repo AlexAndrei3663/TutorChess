@@ -19,6 +19,7 @@ class Game:
     rows = 8
     columns = 8
     dim_square = 64
+    index = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H']
 
     def __init__(self, chess_match, stockfish): 
         self.__chess_match = chess_match
@@ -26,40 +27,101 @@ class Game:
         self.parent = tk.Tk()
         self.parent.title("Tutor Chess")
 
-        # Tabuleiro Principal
+        # Container Jogo
+        self.game_container = tk.Frame(self.parent)
+        self.game_container.pack(padx=8, side=tk.LEFT)
+
+        # Peças Pretas Capturadas
+        self.count_black = 0
+        captured_width = 16 * self.dim_square / 2
+        self.captured_black = tk.Canvas(
+            self.game_container, 
+            width=captured_width, 
+            height=self.dim_square/2, 
+            highlightbackground="black", 
+            highlightthickness=2)
+        self.captured_black.pack(pady=8, side=tk.TOP)
+
+        #Container tabuleiro
+        self.board_container = tk.Frame(self.game_container)
+        self.board_container.pack()
         chess_width = self.columns * self.dim_square
         chess_height = self.rows * self.dim_square
         positionRight = int(self.parent.winfo_screenwidth()/2 - chess_width)
         positionDown = int(self.parent.winfo_screenheight()/2 - chess_height/2)
         self.parent.geometry("+{}+{}".format(positionRight, positionDown))
-        self.chess = tk.Canvas(self.parent, width=chess_width, height=chess_height)
-        self.chess.pack(padx=8, pady=8, side=tk.LEFT)
+
+        # Index numero lateral
+        label_height = 25
+        self.index_lateral = tk.Canvas(self.board_container, width=15, height=chess_height+label_height)
+        self.index_lateral.pack(side=tk.LEFT)
+
+        # Index letras superior
+        self.index_superior = tk.Canvas(self.board_container, width=chess_width, height=label_height)
+        self.index_superior.pack(side=tk.TOP)
+
+        # Labels de index
+        for n in range(8):
+            c0 = n*self.dim_square + self.dim_square/2
+            self.index_lateral.create_text(8, c0+label_height, font="Times 20 italic bold", text=str(8-n))
+            self.index_superior.create_text(c0, int(label_height/2)+1, font="Times 20 italic bold", text=self.index[n])
+
+        # Tabuleiro Principal
+        self.chess = tk.Canvas(self.board_container, width=chess_width, height=chess_height)
+        self.chess.pack()
         self.chess.bind("<Button-1>", self.square_clicked)
 
+        # Peças Brancas Capturadas
+        self.count_white = 0
+        self.captured_white = tk.Canvas(
+            self.game_container, 
+            width=captured_width, 
+            height=self.dim_square/2, 
+            highlightbackground="black", 
+            highlightthickness=2)
+        self.captured_white.pack(pady=8, side=tk.BOTTOM)
+
+        # Container Auxiliar
+        self.aux_container = tk.Frame(self.parent)
+        self.aux_container.pack(padx=8, side=tk.RIGHT)
+
+        # Container da Análize do jogo
+        self.analyze_container = tk.Frame(self.aux_container)
+        self.analyze_container.pack(pady=8, side=tk.TOP)
+
         # Análise do Jogo
-        scrollbar = tk.Scrollbar(self.parent)
-        scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
-        self.lateral = tk.Listbox(
-            self.parent, 
+        scrollbar_analize = tk.Scrollbar(self.analyze_container)
+        scrollbar_analize.pack(side=tk.RIGHT, fill=tk.Y)
+        self.lateral_analize = tk.Listbox(
+            self.analyze_container, 
             width=39, 
-            height=16, 
+            height=22, 
             borderwidth=2, 
             relief="solid", 
-            yscrollcommand=scrollbar.set, 
+            yscrollcommand=scrollbar_analize.set, 
             font=('Times', 14)
         )
-        self.lateral.pack(padx=8, pady=8)
+        self.lateral_analize.pack()
+        scrollbar_analize.config(command = self.lateral_analize.yview)
         
+        # Container de Sugestões
+        self.suggest_container = tk.Frame(self.aux_container)
+        self.suggest_container.pack(pady=8 ,side=tk.LEFT)
+
         # Sugestões de Movimentos
+        scrollbar_suggest = tk.Scrollbar(self.suggest_container, orient='horizontal')
+        scrollbar_suggest.pack(side=tk.BOTTOM, fill=tk.X)
         self.lateral_suggestions = tk.Listbox(
-            self.parent, 
+            self.suggest_container, 
             width=39, 
-            height=6, 
+            height=4, 
             borderwidth=2, 
             relief="solid", 
+            xscrollcommand=scrollbar_suggest.set, 
             font=('Times', 14)
         )
-        self.lateral_suggestions.pack(padx=8, pady=8)
+        self.lateral_suggestions.pack()
+        scrollbar_suggest.config(command = self.lateral_suggestions.xview)
 
     def square_clicked(self, event):
         col_size = row_size = self.dim_square
@@ -75,6 +137,7 @@ class Game:
             try:
                 target = ChessPosition._from_position(Position(int(event.y / row_size), int(event.x / col_size)))
                 captured_piece = self.__chess_match.perform_chess_move(self.source, target)
+                self.draw_captured_pieces(captured_piece)
                 if self.thread != None and self.thread.is_alive():
                     self.cpu_suggestions.terminate()
                     self.thread.join(0)
@@ -90,6 +153,7 @@ class Game:
                     ChessPosition(moviment[0], int(moviment[1])), 
                     ChessPosition(moviment[2], int(moviment[3]))
                 )
+                self.draw_captured_pieces(captured_piece)
                 # Evita que entre em processo de threading
                 if not self.__chess_match.checkmate and not self.__chess_match.draw:
                     self.cpu_suggestions = Suggestion(self.__chess_match)
@@ -109,22 +173,24 @@ class Game:
     def show_suggestions(self, suggestions):
         self.lateral_suggestions.delete(0, tk.END)
         self.lateral_suggestions.insert(1, "Sugestões")
+        n = 1
         for best in suggestions:
             if best.value == None:
                 pass
-            string = ''
+            string = ' ' + str(n) + 'º:  '
             if best.value == 1000.00 or best.value == -1000.00:
                 string += 'CHECK -> '
             else:
                 string += str(best.value) + ' -> '
             string += best.data.mostrar_frente()
             self.lateral_suggestions.insert(tk.END, string)
+            n += 1
 
     def show_match_moves(self):
-        self.lateral.delete(0, tk.END)
+        self.lateral_analize.delete(0, tk.END)
         for i in range(1, len(self.__chess_match.match_moves), 2):
             string = str(i // 2 + 1) + '. ' + self.__chess_match.match_moves[i - 1] + '    ' + self.__chess_match.match_moves[i]
-            self.lateral.insert(tk.END, string)
+            self.lateral_analize.insert(tk.END, string)
 
     def draw_board(self):
         color = self.color2
@@ -163,3 +229,17 @@ class Game:
                     x0 = (j * self.dim_square) + int(self.dim_square / 2)
                     y0 = (i * self.dim_square) + int(self.dim_square / 2)
                     self.chess.coords(piecename, x0, y0)
+
+    def draw_captured_pieces(self, captured_piece=None):
+        if captured_piece:
+            filename = "./src/application/images/c_%s%s.png" % (str(captured_piece).lower(), captured_piece.color.lower())
+            if filename not in self.images:
+                self.images[filename] = tk.PhotoImage(file=filename)
+            if captured_piece.color == "WHITE":
+                x0 = ( self.count_white * self.dim_square/2) + int(self.dim_square / 4)
+                self.captured_white.create_image(x0, int(self.dim_square / 4), image=self.images[filename], anchor="c")
+                self.count_white += 1
+            else:
+                x0 = ( self.count_black * self.dim_square/2) + int(self.dim_square / 4)
+                self.captured_black.create_image(x0, int(self.dim_square / 4), image=self.images[filename], anchor="c")
+                self.count_black += 1
