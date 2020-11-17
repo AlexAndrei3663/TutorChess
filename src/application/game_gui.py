@@ -31,16 +31,16 @@ class Game:
         self.game_container = tk.Frame(self.parent)
         self.game_container.pack(padx=8, side=tk.LEFT)
 
-        # Peças Pretas Capturadas
-        self.count_black = 0
+        # Peças Brancas Capturadas
+        self.count_white = 0
         captured_width = 16 * self.dim_square / 2
-        self.captured_black = tk.Canvas(
+        self.captured_white = tk.Canvas(
             self.game_container, 
             width=captured_width, 
             height=self.dim_square/2, 
             highlightbackground="black", 
             highlightthickness=2)
-        self.captured_black.pack(pady=8, side=tk.TOP)
+        self.captured_white.pack(pady=8, side=tk.TOP)
 
         #Container tabuleiro
         self.board_container = tk.Frame(self.game_container)
@@ -51,35 +51,37 @@ class Game:
         positionDown = int(self.parent.winfo_screenheight()/2 - chess_height/2)
         self.parent.geometry("+{}+{}".format(positionRight, positionDown))
 
-        # Index numero lateral
+        # Index letras inferior
+        label_widht = 15
         label_height = 25
-        self.index_lateral = tk.Canvas(self.board_container, width=15, height=chess_height+label_height)
-        self.index_lateral.pack(side=tk.LEFT)
+        self.index_inferior = tk.Canvas(self.board_container, width=chess_width+label_widht, height=label_height)
+        self.index_inferior.pack(side=tk.BOTTOM)
 
-        # Index letras superior
-        self.index_superior = tk.Canvas(self.board_container, width=chess_width, height=label_height)
-        self.index_superior.pack(side=tk.TOP)
+        # Index numero lateral
+        
+        self.index_lateral = tk.Canvas(self.board_container, width=label_widht, height=chess_height)
+        self.index_lateral.pack(side=tk.LEFT)
 
         # Labels de index
         for n in range(8):
             c0 = n*self.dim_square + self.dim_square/2
-            self.index_lateral.create_text(8, c0+label_height, font="Times 20 italic bold", text=str(8-n))
-            self.index_superior.create_text(c0, int(label_height/2)+1, font="Times 20 italic bold", text=self.index[n])
+            self.index_lateral.create_text(int(label_widht/2)+1, c0, font="Times 20 italic bold", text=str(8-n))
+            self.index_inferior.create_text(c0+label_widht, int(label_height/2)+1, font="Times 20 italic bold", text=self.index[n])
 
         # Tabuleiro Principal
         self.chess = tk.Canvas(self.board_container, width=chess_width, height=chess_height)
         self.chess.pack()
         self.chess.bind("<Button-1>", self.square_clicked)
 
-        # Peças Brancas Capturadas
-        self.count_white = 0
-        self.captured_white = tk.Canvas(
+        # Peças Pretas Capturadas
+        self.count_black = 0
+        self.captured_black = tk.Canvas(
             self.game_container, 
             width=captured_width, 
             height=self.dim_square/2, 
             highlightbackground="black", 
             highlightthickness=2)
-        self.captured_white.pack(pady=8, side=tk.BOTTOM)
+        self.captured_black.pack(pady=8, side=tk.BOTTOM)
 
         # Container Auxiliar
         self.aux_container = tk.Frame(self.parent)
