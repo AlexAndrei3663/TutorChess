@@ -1,5 +1,4 @@
 import tkinter as tk
-from .UI import UI
 from chessGame.boardgame.Position import Position
 from chessGame.chess import ChessException, ChessMatch
 from chessGame.chess.ChessPosition import ChessPosition
@@ -7,7 +6,7 @@ from stockfish import Stockfish
 from cpu.Suggestion import Suggestion
 import threading
 
-class GUI:
+class Game:
     pieces = {}
     focused = None
     source = None
@@ -27,16 +26,12 @@ class GUI:
         self.parent = tk.Tk()
         self.parent.title("Tutor Chess")
 
-        # Adding Top Menu
-        self.menubar = tk.Menu(self.parent)
-        self.filemenu = tk.Menu(self.menubar, tearoff=0)
-        self.filemenu.add_command(label="Novo Jogo", command=self.new_game)
-        self.menubar.add_cascade(label="Menu", menu=self.filemenu)
-        self.parent.config(menu=self.menubar)
-
         # Tabuleiro Principal
         chess_width = self.columns * self.dim_square
         chess_height = self.rows * self.dim_square
+        positionRight = int(self.parent.winfo_screenwidth()/2 - chess_width)
+        positionDown = int(self.parent.winfo_screenheight()/2 - chess_height/2)
+        self.parent.geometry("+{}+{}".format(positionRight, positionDown))
         self.chess = tk.Canvas(self.parent, width=chess_width, height=chess_height)
         self.chess.pack(padx=8, pady=8, side=tk.LEFT)
         self.chess.bind("<Button-1>", self.square_clicked)
@@ -66,16 +61,6 @@ class GUI:
         )
         self.lateral_suggestions.pack(padx=8, pady=8)
 
-    def main_loop(self):
-        self.parent.update_idletasks()
-        self.parent.update()
-
-    def new_game(self):
-        self.chessboard.show(chessboard.START_PATTERN)
-        self.draw_board()
-        self.draw_pieces()
-        self.info_label.config(text="   Peças brancas para começar  ", fg='red')
-
     def square_clicked(self, event):
         col_size = row_size = self.dim_square
         if not self.source:
@@ -90,7 +75,7 @@ class GUI:
             try:
                 target = ChessPosition._from_position(Position(int(event.y / row_size), int(event.x / col_size)))
                 captured_piece = self.__chess_match.perform_chess_move(self.source, target)
-                if self.thread.is_alive():
+                if self.thread != None and self.thread.is_alive():
                     self.cpu_suggestions.terminate()
                     self.thread.join(0)
             except ChessException.ChessException as e:
@@ -138,8 +123,8 @@ class GUI:
     def show_match_moves(self):
         self.lateral.delete(0, tk.END)
         for i in range(1, len(self.__chess_match.match_moves), 2):
-            string = str(i) + '. ' + self.__chess_match.match_moves[i - 1] + '    ' + self.__chess_match.match_moves[i]
-            self.lateral.insert(i, string)
+            string = str(i // 2 + 1) + '. ' + self.__chess_match.match_moves[i - 1] + '    ' + self.__chess_match.match_moves[i]
+            self.lateral.insert(tk.END, string)
 
     def draw_board(self):
         color = self.color2
@@ -170,7 +155,7 @@ class GUI:
             for j in range(len(pieces)):
                 piece = pieces[i][j]
                 if piece:
-                    filename = "./src/pieces_image/%s%s.png" % (str(piece).lower(), piece.color.lower())
+                    filename = "./src/application/images/%s%s.png" % (str(piece).lower(), piece.color.lower())
                     piecename = "%s%s%s" % (str(piece), i, j)
                     if filename not in self.images:
                         self.images[filename] = tk.PhotoImage(file=filename)
