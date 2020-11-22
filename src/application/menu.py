@@ -6,6 +6,7 @@ from application.UI import UI
 from application.game_gui import Game
 from cpu.Suggestion import Suggestion
 from stockfish import Stockfish
+from PIL import Image, ImageTk
 import threading
 
 class Menu:
@@ -25,16 +26,25 @@ class Menu:
         positionDown = int(self.parent.winfo_screenheight()/2 - height_size/2)
         self.parent.geometry("+{}+{}".format(positionRight, positionDown))
 
-        self.principal = tk.Canvas(self.parent, width=width_size, height=height_size, background="#000000")
-        # background_image = tk.PhotoImage(file="./src/application/images/teste.png")
-        # label = tk.Label(self.parent, image=background_image)
-        # label.place(x=0, y=0, relwidth=1, relheight=1)
+        # Imagem de fundo
+        self.principal = tk.Canvas(self.parent, width=width_size, height=height_size)
+        background_image = ImageTk.PhotoImage(Image.open("src/application/images/background_image.jpg").resize((725, 515)))
+        label = tk.Label(self.parent, image=background_image)
+        label.image = background_image
+        label.place(x=0, y=0, relwidth=1, relheight=1)
         self.principal.pack()
+
+        # Imagem da logo
+        img = Image.open("src/application/images/logoProjeto.png").resize((400, 100)).convert("RGBA")
+        logo_image = ImageTk.PhotoImage(img)
+        label_logo = tk.Label(self.parent, image=logo_image)
+        label_logo.image = logo_image
+        label_logo.place(relx=0.5, rely=0.25, anchor=tk.CENTER)
 
         # Botões
         # PLayer vs Player
         self.novo_jogo_player = tk.Button(
-            self.parent, 
+            self.parent,
             text="Player vs Player",
             height=2,
             width=50,
@@ -77,6 +87,7 @@ class Menu:
         tk.messagebox.showinfo("Tutorial", "Tutorial sobre o Jogo")
 
     def __initial_game(self):
+        # self.parent.withdraw()
         self.parent.destroy()
         self.tabuleiro = ChessMatch.ChessMatch(self.bot_color)
         self.stockfish = Stockfish("./src/cpu/stockfish_20090216_x64")
@@ -95,10 +106,11 @@ class Menu:
             self.game_gui.cpu_suggestions = Suggestion(self.tabuleiro)
             self.game_gui.thread = threading.Thread(target = self.game_gui.cpu_suggestions.calculate_suggestions, args=(self.game_gui,))
             self.game_gui.thread.start()
-            
+
         self.game_gui.draw_board()
         self.game_gui.draw_pieces()
         self.game_gui.parent.mainloop()
+        # self.parent.deiconify()
 
     def set_color(self):
         self.win = tk.Toplevel(bg="#FFFFFF")

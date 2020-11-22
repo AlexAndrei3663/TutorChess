@@ -4,6 +4,7 @@ from chessGame.chess import ChessException, ChessMatch
 from chessGame.chess.ChessPosition import ChessPosition
 from stockfish import Stockfish
 from cpu.Suggestion import Suggestion
+from PIL import Image, ImageTk
 import threading
 
 class Game:
@@ -42,7 +43,7 @@ class Game:
             highlightthickness=2)
         self.captured_white.pack(pady=8, side=tk.TOP)
 
-        #Container tabuleiro
+        # Container tabuleiro
         self.board_container = tk.Frame(self.game_container)
         self.board_container.pack()
         chess_width = self.columns * self.dim_square
@@ -50,6 +51,12 @@ class Game:
         positionRight = int(self.parent.winfo_screenwidth()/2 - chess_width)
         positionDown = int(self.parent.winfo_screenheight()/2 - chess_height/2)
         self.parent.geometry("+{}+{}".format(positionRight, positionDown))
+
+        # Label do jogador atual
+        self.btm_frame = tk.Frame(self.game_container)
+        self.current_player_label = tk.Label(self.btm_frame, text="Peças brancas para começar", fg=self.color2)
+        self.current_player_label.pack(side=tk.RIGHT, padx=8, pady=5)
+        self.btm_frame.pack(fill="x", side=tk.BOTTOM)
 
         # Index letras inferior
         label_widht = 15
@@ -133,18 +140,17 @@ class Game:
                 self.draw_board()
             except ChessException.ChessException as e:
                 self.source = None
-                print(e)
         else:
             try:
                 target = ChessPosition._from_position(Position(int(event.y / row_size), int(event.x / col_size)))
                 captured_piece = self.__chess_match.perform_chess_move(self.source, target)
                 self.draw_captured_pieces(captured_piece)
+                self.current_player_label.configure(text='Vez das ' + ('Brancas' if self.__chess_match.current_player == 'WHITE' else 'Negras'))
                 if self.thread != None and self.thread.is_alive():
                     self.cpu_suggestions.terminate()
                     self.thread.join(0)
             except ChessException.ChessException as e:
-                print(e)
-
+                pass
             self.source = None
             self.focused = None
             self.__stockfish.set_fen_position(self.__chess_match.get_fen_notation())
@@ -169,7 +175,7 @@ class Game:
             if self.thread.is_alive():
                 self.cpu_suggestions.terminate()
                 self.thread.join(0)
-            self.parent.quit()
+            self.parent.destroy()
 
     def show_suggestions(self, suggestions):
         self.lateral_suggestions.delete(0, tk.END)
@@ -222,10 +228,10 @@ class Game:
             for j in range(len(pieces)):
                 piece = pieces[i][j]
                 if piece:
-                    filename = "./src/application/images/%s%s.png" % (str(piece).lower(), piece.color.lower())
+                    filename = "src/application/images/%s%s.png" % (str(piece).lower(), piece.color.lower())
                     piecename = "%s%s%s" % (str(piece), i, j)
                     if filename not in self.images:
-                        self.images[filename] = tk.PhotoImage(file=filename)
+                        self.images[filename] = ImageTk.PhotoImage(Image.open(filename))
                     self.chess.create_image(0, 0, image=self.images[filename], tags=(piecename, "Ocupado"), anchor="c")
                     x0 = (j * self.dim_square) + int(self.dim_square / 2)
                     y0 = (i * self.dim_square) + int(self.dim_square / 2)
