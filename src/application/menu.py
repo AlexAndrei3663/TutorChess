@@ -7,14 +7,18 @@ from application.game_gui import Game
 from cpu.Suggestion import Suggestion
 from stockfish import Stockfish
 from PIL import Image, ImageTk
-import threading
+import threading, os
+
+dir_name, filename = os.path.split(os.path.abspath(__file__))
+print(dir_name)
+print(filename)
 
 class Menu:
     bot_color = None
 
     def __init__(self): 
         self.parent = tk.Tk()
-        self.parent.title("Tutor Chess")
+        self.parent.title('Tutor Chess')
         self.tabuleiro = None
         self.stockfish = None
         self.game_gui = None
@@ -24,18 +28,18 @@ class Menu:
         height_size = 8 * 64
         positionRight = int(self.parent.winfo_screenwidth()/2 - width_size/2)
         positionDown = int(self.parent.winfo_screenheight()/2 - height_size/2)
-        self.parent.geometry("+{}+{}".format(positionRight, positionDown))
+        self.parent.geometry('+{}+{}'.format(positionRight, positionDown))
 
         # Imagem de fundo
         self.principal = tk.Canvas(self.parent, width=width_size, height=height_size)
-        background_image = ImageTk.PhotoImage(Image.open("src/application/images/background_image.jpg").resize((725, 515)))
+        background_image = ImageTk.PhotoImage(Image.open(dir_name+'\\images\\background_image.jpg').resize((725, 515)))
         label = tk.Label(self.parent, image=background_image)
         label.image = background_image
         label.place(x=0, y=0, relwidth=1, relheight=1)
         self.principal.pack()
 
         # Imagem da logo
-        img = Image.open("src/application/images/logoProjeto.png").resize((400, 100)).convert("RGBA")
+        img = Image.open(dir_name+'\\images\\logoProjeto.png').resize((400, 100)).convert('RGBA')
         logo_image = ImageTk.PhotoImage(img)
         label_logo = tk.Label(self.parent, image=logo_image)
         label_logo.image = logo_image
@@ -45,7 +49,7 @@ class Menu:
         # PLayer vs Player
         self.novo_jogo_player = tk.Button(
             self.parent,
-            text="Player vs Player",
+            text='Player vs Player',
             height=2,
             width=50,
             command=self.new_game
@@ -55,7 +59,7 @@ class Menu:
         # PLayer vs Bot
         self.novo_jogo_bot = tk.Button(
             self.parent, 
-            text="Player vs Bot",
+            text='Player vs Bot',
             height=2,
             width=50,
             command=self.set_color
@@ -65,7 +69,7 @@ class Menu:
         # Tutorial
         self.tutorial = tk.Button(
             self.parent, 
-            text="Tutorial",
+            text='Tutorial',
             height=2,
             width=50,
             command=self.tutorial_text
@@ -75,7 +79,7 @@ class Menu:
         # Sair
         self.finalizar = tk.Button(
             self.parent, 
-            text="Finalizar",
+            text='Finalizar',
             height=2,
             width=50,
             command=exit
@@ -84,13 +88,13 @@ class Menu:
 
     # Descrever um tutorial sobre a aplicação
     def tutorial_text(self):
-        tk.messagebox.showinfo("Tutorial", "Tutorial sobre o Jogo")
+        tk.messagebox.showinfo('Tutorial', 'Tutorial sobre o Jogo')
 
     def __initial_game(self):
         # self.parent.withdraw()
         self.parent.destroy()
         self.tabuleiro = ChessMatch.ChessMatch(self.bot_color)
-        self.stockfish = Stockfish("./src/cpu/stockfish_20090216_x64")
+        self.stockfish = Stockfish('./src/cpu/stockfish_20090216_x64')
         self.stockfish.set_skill_level(0)
         self.game_gui = Game(self.tabuleiro, self.stockfish)
 
@@ -113,21 +117,21 @@ class Menu:
         # self.parent.deiconify()
 
     def set_color(self):
-        self.win = tk.Toplevel(bg="#FFFFFF")
-        self.win.wm_title("Escolha a Cor")
+        self.win = tk.Toplevel(bg='#FFFFFF')
+        self.win.wm_title('Escolha a Cor')
         positionRight = int(self.win.winfo_screenwidth()/2 - 266/2)
         positionDown = int(self.win.winfo_screenheight()/2 - 100/2)
-        self.win.geometry("+{}+{}".format(positionRight, positionDown))
+        self.win.geometry('+{}+{}'.format(positionRight, positionDown))
         self.win.grab_set()
         text = tk.Text(self.win, width=30, height=1, relief=tk.FLAT)
-        text.insert(tk.INSERT, "Escolha a cor do seu jogador.")
+        text.insert(tk.INSERT, 'Escolha a cor do seu jogador.')
         text.configure(state=tk.DISABLED)
         text.pack(padx=8, pady=8, side=tk.TOP)
 
         # Cor Branca
         white_color = tk.Button(
             self.win,
-            text="Brancas",
+            text='Brancas',
             height=2,
             width=15,
             command = self.__set_bot_black
@@ -137,7 +141,7 @@ class Menu:
         # Cor Negra
         black_color = tk.Button(
             self.win, 
-            text="Negras",
+            text='Negras',
             height=2,
             width=15,
             command = self.__set_bot_white
