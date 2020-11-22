@@ -242,10 +242,12 @@ class Lista:
     # Printa do primeiro elemento ao ultimo
     def mostrar_frente(self):
         # Começar do primeiro elemento e ir até o ultimo
+        string = ''
         atual = self.__primeiro
         while atual:
-            print(atual)
+            string += str(atual) + ' '
             atual = atual.proximo
+        return string
 
     # Printa do ultimo elemento ao primeiro
     def mostrar_tras(self):
