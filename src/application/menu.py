@@ -5,11 +5,13 @@ from chessGame.chess import ChessMatch
 from application.UI import UI
 from application.game_gui import Game
 from cpu.Suggestion import Suggestion
+from stockfish import Stockfish
 from PIL import Image, ImageTk
 import threading, os
-from stockfish import Stockfish
 
 dir_name, filename = os.path.split(os.path.abspath(__file__))
+print(dir_name)
+print(filename)
 
 class Menu:
     bot_color = None
@@ -92,7 +94,7 @@ class Menu:
         # self.parent.withdraw()
         self.parent.destroy()
         self.tabuleiro = ChessMatch.ChessMatch(self.bot_color)
-        self.stockfish = Stockfish(dir_name+'\\stockfish_20090216_x64.exe')
+        self.stockfish = Stockfish('./src/cpu/stockfish_20090216_x64')
         self.stockfish.set_skill_level(0)
         self.game_gui = Game(self.tabuleiro, self.stockfish)
 
