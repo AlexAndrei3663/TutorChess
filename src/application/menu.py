@@ -2,7 +2,6 @@ import tkinter as tk
 from tkinter import messagebox
 from chessGame.chess.ChessPosition import ChessPosition
 from chessGame.chess import ChessMatch
-from application.UI import UI
 from application.game_gui import Game
 from cpu.Suggestion import Suggestion
 from stockfish import Stockfish

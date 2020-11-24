@@ -199,10 +199,10 @@ class Lista:
         # Encontrar o elemento
         while temp.valor != valor:
             # Elemento não encontrado
+            temp = temp.proximo
             if temp == None:
                 raise Warning('Erro, valor fora da lista.')
-            temp = temp.proximo
-
+        
         # Verificar se esse termo é o primeiro da lista
         # Sincronizar os ponteiros (esquerda)
         if temp == self.__primeiro:
@@ -252,8 +252,9 @@ class Lista:
     # Printa do ultimo elemento ao primeiro
     def mostrar_tras(self):
         # Começar do ultimo elemento e ir até o primeiro
+        string = ''
         atual = self.__ultimo
         while atual:
-            print(atual, end = ' ')
+            string += str(atual) + ' '
             atual = atual.anterior
-        print()
+        return string
