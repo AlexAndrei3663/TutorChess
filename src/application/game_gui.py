@@ -52,12 +52,6 @@ class Game:
         positionDown = int(self.parent.winfo_screenheight()/2 - chess_height/2)
         self.parent.geometry("+{}+{}".format(positionRight, positionDown))
 
-        # Label do jogador atual
-        self.btm_frame = tk.Frame(self.game_container)
-        self.current_player_label = tk.Label(self.btm_frame, text="Peças brancas para começar", fg=self.color2)
-        self.current_player_label.pack(side=tk.RIGHT, padx=8, pady=5)
-        self.btm_frame.pack(fill="x", side=tk.BOTTOM)
-
         # Index letras inferior
         label_widht = 15
         label_height = 25
@@ -103,7 +97,7 @@ class Game:
         self.lateral_analize = tk.Listbox(
             self.analyze_container, 
             width=39, 
-            height=22, 
+            height=20, 
             borderwidth=2, 
             relief="solid", 
             yscrollcommand=scrollbar_analize.set, 
@@ -114,14 +108,14 @@ class Game:
         
         # Container de Sugestões
         self.suggest_container = tk.Frame(self.aux_container)
-        self.suggest_container.pack(pady=8 ,side=tk.LEFT)
+        self.suggest_container.pack(pady=8 ,side=tk.TOP)
 
         # Sugestões de Movimentos
         scrollbar_suggest = tk.Scrollbar(self.suggest_container, orient='horizontal')
         scrollbar_suggest.pack(side=tk.BOTTOM, fill=tk.X)
         self.lateral_suggestions = tk.Listbox(
             self.suggest_container, 
-            width=39, 
+            width=41, 
             height=4, 
             borderwidth=2, 
             relief="solid", 
@@ -131,6 +125,12 @@ class Game:
         self.lateral_suggestions.pack()
         scrollbar_suggest.config(command = self.lateral_suggestions.xview)
 
+        # Label do jogador atual
+        self.btm_frame = tk.Frame(self.aux_container)
+        self.current_player_label = tk.Label(self.btm_frame, text="Peças brancas para começar", fg=self.color2, anchor="center")
+        self.current_player_label.pack(padx=8, pady=5)
+        self.btm_frame.pack(fill="x", side=tk.BOTTOM)
+
     def square_clicked(self, event):
         col_size = row_size = self.dim_square
         if not self.source:
@@ -139,18 +139,18 @@ class Game:
                 self.focused = self.__chess_match.possible_move(self.source)
                 self.draw_board()
             except ChessException.ChessException as e:
+                self.current_player_label.configure(text=e)
                 self.source = None
         else:
             try:
                 target = ChessPosition._from_position(Position(int(event.y / row_size), int(event.x / col_size)))
                 captured_piece = self.__chess_match.perform_chess_move(self.source, target)
                 self.draw_captured_pieces(captured_piece)
-                self.current_player_label.configure(text='Vez das ' + ('Brancas' if self.__chess_match.current_player == 'WHITE' else 'Negras'))
                 if self.thread != None and self.thread.is_alive():
                     self.cpu_suggestions.terminate()
                     self.thread.join(0)
             except ChessException.ChessException as e:
-                pass
+                self.current_player_label.configure(text=e)
             self.source = None
             self.focused = None
             self.__stockfish.set_fen_position(self.__chess_match.get_fen_notation())
@@ -161,13 +161,16 @@ class Game:
                     ChessPosition(moviment[2], int(moviment[3]))
                 )
                 self.draw_captured_pieces(captured_piece)
-                # Evita que entre em processo de threading
-                if not self.__chess_match.checkmate and not self.__chess_match.draw:
-                    self.cpu_suggestions = Suggestion(self.__chess_match)
-                    self.thread = threading.Thread(target = self.cpu_suggestions.calculate_suggestions, args=(self,))
-                    self.thread.start()
-                    self.lateral_suggestions.delete(0, tk.END)
-                    self.lateral_suggestions.insert(1, "Calculando Sugestões...")
+
+            # Evita que entre em processo de threading
+            if not self.__chess_match.checkmate and not self.__chess_match.draw:
+                self.cpu_suggestions = Suggestion(self.__chess_match)
+                self.thread = threading.Thread(target = self.cpu_suggestions.calculate_suggestions, args=(self,))
+                self.thread.start()
+                self.lateral_suggestions.delete(0, tk.END)
+                self.lateral_suggestions.insert(1, "Calculando Sugestões...")
+
+            self.current_player_label.configure(text='Vez das ' + ('Brancas' if self.__chess_match.current_player == 'WHITE' else 'Negras'))
             self.draw_board()
             self.draw_pieces()
         self.show_match_moves()
@@ -175,7 +178,8 @@ class Game:
             if self.thread.is_alive():
                 self.cpu_suggestions.terminate()
                 self.thread.join(0)
-            self.parent.destroy()
+            self.parent.quit()
+            self._end_game()
 
     def show_suggestions(self, suggestions):
         self.lateral_suggestions.delete(0, tk.END)
@@ -183,7 +187,7 @@ class Game:
         n = 1
         for best in suggestions:
             if best.value == None:
-                pass
+                continue
             string = ' ' + str(n) + 'º:  '
             if best.value == 1000.00 or best.value == -1000.00:
                 string += 'CHECK -> '
@@ -250,3 +254,34 @@ class Game:
                 x0 = ( self.count_black * self.dim_square/2) + int(self.dim_square / 4)
                 self.captured_black.create_image(x0, int(self.dim_square / 4), image=self.images[filename], anchor="c")
                 self.count_black += 1
+
+    def _end_game(self):
+        def end_button():
+            self.parent.destroy()
+
+        self.win = tk.Toplevel(bg="#FFFFFF")
+        self.win.wm_title("Xeque-mate")
+        positionRight = int(self.win.winfo_screenwidth()/2 - 266/2)
+        positionDown = int(self.win.winfo_screenheight()/2 - 100/2)
+        self.win.geometry("+{}+{}".format(positionRight, positionDown))
+        self.win.grab_set()
+        text = tk.Text(self.win, width=45, height=2, relief=tk.FLAT)
+        text.tag_config("w", font="Times 20 italic bold", justify=tk.CENTER)
+        if self.__chess_match.current_player == 'WHITE':
+            winner = "AS BRANCAS GANHARAM"
+        else:
+            winner = "AS PRETAS GANHARAM"
+        text.insert(tk.INSERT, winner, "w")
+        text.configure(state=tk.DISABLED)
+        text.pack(padx=8, pady=8, side=tk.TOP)
+
+        # Botão final
+        ok = tk.Button(
+            self.win,
+            text="OK",
+            height=2,
+            width=15,
+            command = end_button
+        )
+        ok.pack(padx=8, pady=8)
+        

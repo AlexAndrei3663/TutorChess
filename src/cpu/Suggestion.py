@@ -14,22 +14,23 @@ class Suggestion:
 
     def calculate_suggestions(self, gui):
         for _ in range(5):
+            if self.__stop_thread:
+                return
             stockfish = Stockfish("./src/cpu/stockfish_20090216_x64", 3)
             new_chess_match = copy.deepcopy(self.__chess_match)
             stockfish.set_fen_position(new_chess_match.get_fen_notation())
             new_chess_match.match_moves.limpa_pilha()
-            rounds = 0
+            rounds = 0 
             while rounds < 18 and (not new_chess_match.checkmate and not new_chess_match.draw):
+                if self.__stop_thread:
+                    return
                 moviment = stockfish.get_best_move()
-                captured_piece = new_chess_match.perform_chess_move(
+                new_chess_match.perform_chess_move(
                     ChessPosition(moviment[0], int(moviment[1])), 
                     ChessPosition(moviment[2], int(moviment[3]))
                 )
                 stockfish.set_fen_position(new_chess_match.get_fen_notation())
                 rounds += 1
-                
-                if self.__stop_thread:
-                    return
             self.__moviment_tree.add(self.get_eval(stockfish, new_chess_match), new_chess_match.match_moves)
         
         moviments = self.__moviment_tree.max3() if new_chess_match.current_player == 'WHITE' else self.__moviment_tree.min3()

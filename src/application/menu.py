@@ -97,14 +97,16 @@ class Menu:
         self.__initial_game()
         if self.tabuleiro.current_player == self.bot_color:
             moviment = self.stockfish.get_best_move()
-            captured_piece = self.tabuleiro.perform_chess_move(
+            self.tabuleiro.perform_chess_move(
                 ChessPosition(moviment[0], int(moviment[1])), 
                 ChessPosition(moviment[2], int(moviment[3]))
             )
-            self.stockfish.set_fen_position(self.tabuleiro.get_fen_notation())
-            self.game_gui.cpu_suggestions = Suggestion(self.tabuleiro)
-            self.game_gui.thread = threading.Thread(target = self.game_gui.cpu_suggestions.calculate_suggestions, args=(self.game_gui,))
-            self.game_gui.thread.start()
+
+        self.stockfish.set_fen_position(self.tabuleiro.get_fen_notation())
+        self.game_gui.cpu_suggestions = Suggestion(self.tabuleiro)
+        self.game_gui.thread = threading.Thread(target = self.game_gui.cpu_suggestions.calculate_suggestions, args=(self.game_gui,))
+        self.game_gui.thread.start()
+        self.game_gui.lateral_suggestions.insert(1, "Calculando Sugestões...")
 
         self.game_gui.draw_board()
         self.game_gui.draw_pieces()
