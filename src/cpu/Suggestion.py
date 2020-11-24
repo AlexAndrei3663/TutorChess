@@ -14,8 +14,6 @@ class Suggestion:
 
     def calculate_suggestions(self, gui):
         for _ in range(5):
-            if self.__stop_thread:
-                return
             stockfish = Stockfish("./src/cpu/stockfish_20090216_x64", 3)
             new_chess_match = copy.deepcopy(self.__chess_match)
             stockfish.set_fen_position(new_chess_match.get_fen_notation())
@@ -32,13 +30,19 @@ class Suggestion:
                 stockfish.set_fen_position(new_chess_match.get_fen_notation())
                 rounds += 1
             self.__moviment_tree.add(self.get_eval(stockfish, new_chess_match), new_chess_match.match_moves)
-        
+        if self.__stop_thread:
+                return
         moviments = self.__moviment_tree.max3() if new_chess_match.current_player == 'WHITE' else self.__moviment_tree.min3()
         gui.show_suggestions(moviments)
 
-    @staticmethod
-    def get_eval(stockfish, chess_match) -> float:
-        stockfish._put(f"position fen {chess_match.get_fen_notation()}\n eval")
+    def get_eval(self, stockfish, chess_match=None, fen=None) -> float:
+        if fen:
+            stockfish._put(f"position fen {fen}\n eval")
+        elif chess_match:
+            stockfish._put(f"position fen {chess_match.get_fen_notation()}\n eval")
+        else:
+            ValueError('Fen notation nao especificada')
+            
         while True:
             text = stockfish._read_line()
             splitted_text = text.split(" ")
@@ -49,10 +53,12 @@ class Suggestion:
                     eval = (float(splitted_text[-1]) + float(splitted_text[-3]))
                 return float('%.2f'%eval)
             elif splitted_text[0] == "Final":
-                if chess_match.check:
-                    if chess_match.current_player == "WHITE":
-                        return 1000.00
-                    else:
-                        return -1000.00
-                else:
-                    NameError('Eval nao encontrado')
+                move_list = []
+                for n in range(len(self.__chess_match.match_moves)):
+                    move_list.append(self.__chess_match.match_moves[n])
+                for n in range(len(chess_match.match_moves)-1):
+                    move_list.append(chess_match.match_moves[n])
+                stockfish.set_position(move_list)
+                return self.get_eval(stockfish, fen=stockfish.get_fen_position())
+
+                NameError('Eval nao encontrado')

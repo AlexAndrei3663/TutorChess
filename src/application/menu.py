@@ -14,18 +14,14 @@ class Menu:
     def __init__(self): 
         self.parent = tk.Tk()
         self.parent.title("Tutor Chess")
+        self.parent.iconphoto(False, tk.PhotoImage(file='src/application/images/icon.png'))
         self.tabuleiro = None
         self.stockfish = None
         self.game_gui = None
-
-        # Tela Principal
+        
+        # Imagem de fundo
         width_size = 8 * 64
         height_size = 8 * 64
-        positionRight = int(self.parent.winfo_screenwidth()/2 - width_size/2)
-        positionDown = int(self.parent.winfo_screenheight()/2 - height_size/2)
-        self.parent.geometry("+{}+{}".format(positionRight, positionDown))
-
-        # Imagem de fundo
         self.principal = tk.Canvas(self.parent, width=width_size, height=height_size)
         background_image = ImageTk.PhotoImage(Image.open("src/application/images/background_image.jpg").resize((725, 515)))
         label = tk.Label(self.parent, image=background_image)
@@ -80,6 +76,13 @@ class Menu:
             command=exit
         )
         self.finalizar.place(relx=0.5, rely=0.8, anchor=tk.CENTER)
+
+        # Posicionamento da Tela Principal
+        self.parent.update_idletasks()
+        positionRight = int((self.parent.winfo_screenwidth() - self.parent.winfo_reqwidth())/2)
+        positionDown = int((self.parent.winfo_screenheight() - self.parent.winfo_reqheight())/2)
+        self.parent.geometry("+{}+{}".format(positionRight, positionDown))
+        self.parent.resizable(0, 0)
 
     # Descrever um tutorial sobre a aplicação
     def tutorial_text(self):

@@ -48,9 +48,6 @@ class Game:
         self.board_container.pack()
         chess_width = self.columns * self.dim_square
         chess_height = self.rows * self.dim_square
-        positionRight = int(self.parent.winfo_screenwidth()/2 - chess_width)
-        positionDown = int(self.parent.winfo_screenheight()/2 - chess_height/2)
-        self.parent.geometry("+{}+{}".format(positionRight, positionDown))
 
         # Index letras inferior
         label_widht = 15
@@ -131,6 +128,25 @@ class Game:
         self.current_player_label.pack(padx=8, pady=5)
         self.btm_frame.pack(fill="x", side=tk.BOTTOM)
 
+        # Conficurações da Janela
+        self.parent.update_idletasks()
+        positionRight = int((self.parent.winfo_screenwidth() - self.parent.winfo_reqwidth())/2)
+        positionDown = int((self.parent.winfo_screenheight() - self.parent.winfo_reqheight() - 25)/2)
+        self.parent.geometry("+{}+{}".format(positionRight, positionDown))
+        self.parent.resizable(0, 0)
+        self.parent.iconphoto(False, tk.PhotoImage(file='src/application/images/icon.png'))
+        self.parent.protocol("WM_DELETE_WINDOW", self.on_closing)
+
+    def on_closing(self):
+        if self.thread.is_alive():
+                self.cpu_suggestions.terminate()
+                self.thread.join(0)
+        if self.__chess_match.checkmate or self.__chess_match.draw:
+            self.parent.quit()
+            self._end_game()
+        else:
+            self.parent.destroy()
+
     def square_clicked(self, event):
         col_size = row_size = self.dim_square
         if not self.source:
@@ -146,11 +162,13 @@ class Game:
                 target = ChessPosition._from_position(Position(int(event.y / row_size), int(event.x / col_size)))
                 captured_piece = self.__chess_match.perform_chess_move(self.source, target)
                 self.draw_captured_pieces(captured_piece)
+                self.current_player_label.configure(text='Vez das ' + ('Brancas' if self.__chess_match.current_player == 'WHITE' else 'Negras'))
                 if self.thread != None and self.thread.is_alive():
                     self.cpu_suggestions.terminate()
                     self.thread.join(0)
             except ChessException.ChessException as e:
                 self.current_player_label.configure(text=e)
+
             self.source = None
             self.focused = None
             self.__stockfish.set_fen_position(self.__chess_match.get_fen_notation())
@@ -161,6 +179,7 @@ class Game:
                     ChessPosition(moviment[2], int(moviment[3]))
                 )
                 self.draw_captured_pieces(captured_piece)
+                self.current_player_label.configure(text='Vez das ' + ('Brancas' if self.__chess_match.current_player == 'WHITE' else 'Negras'))
 
             # Evita que entre em processo de threading
             if not self.__chess_match.checkmate and not self.__chess_match.draw:
@@ -169,17 +188,12 @@ class Game:
                 self.thread.start()
                 self.lateral_suggestions.delete(0, tk.END)
                 self.lateral_suggestions.insert(1, "Calculando Sugestões...")
-
-            self.current_player_label.configure(text='Vez das ' + ('Brancas' if self.__chess_match.current_player == 'WHITE' else 'Negras'))
+       
             self.draw_board()
             self.draw_pieces()
         self.show_match_moves()
         if self.__chess_match.checkmate or self.__chess_match.draw:
-            if self.thread.is_alive():
-                self.cpu_suggestions.terminate()
-                self.thread.join(0)
-            self.parent.quit()
-            self._end_game()
+            self.on_closing()
 
     def show_suggestions(self, suggestions):
         self.lateral_suggestions.delete(0, tk.END)
@@ -199,9 +213,14 @@ class Game:
 
     def show_match_moves(self):
         self.lateral_analize.delete(0, tk.END)
-        for i in range(1, len(self.__chess_match.match_moves), 2):
-            string = str(i // 2 + 1) + '. ' + self.__chess_match.match_moves[i - 1] + '    ' + self.__chess_match.match_moves[i]
-            self.lateral_analize.insert(tk.END, string)
+        if self.__chess_match.bot_color:
+            for i in range(1, len(self.__chess_match.match_moves), 2):
+                string = str(i // 2 + 1) + '. ' + self.__chess_match.match_moves[i - 1] + '    ' + self.__chess_match.match_moves[i]
+                self.lateral_analize.insert(tk.END, string)
+        else:
+            for i in range(len(self.__chess_match.match_moves)):
+                string = str(i+1) + '. ' + self.__chess_match.match_moves[i]
+                self.lateral_analize.insert(tk.END, string)
 
     def draw_board(self):
         color = self.color2
