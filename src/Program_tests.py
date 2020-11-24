@@ -108,6 +108,7 @@ class ListaDuplamenteEncadeadaTests(unittest.TestCase):
         '''
         (inicio) -- (meio) -- (final)
         '''
+        
         self.assertEqual(self.lista.mostrar_frente(), 'inicio meio final ', 'Print Invalido.')
         self.assertEqual(self.lista.mostrar_tras(), 'final meio inicio ', 'Print Invalido.')
 

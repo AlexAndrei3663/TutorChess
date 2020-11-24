@@ -139,8 +139,8 @@ class Game:
 
     def on_closing(self):
         if self.thread.is_alive():
-                self.cpu_suggestions.terminate()
-                self.thread.join(0)
+            self.cpu_suggestions.terminate()
+            self.thread.join(0)
         if self.__chess_match.checkmate or self.__chess_match.draw:
             self.parent.quit()
             self._end_game()
@@ -203,10 +203,7 @@ class Game:
             if best.value == None:
                 continue
             string = ' ' + str(n) + 'º:  '
-            if best.value == 1000.00 or best.value == -1000.00:
-                string += 'CHECK -> '
-            else:
-                string += str(best.value) + ' -> '
+            string += str(best.value) + ' -> '
             string += best.data.mostrar_frente()
             self.lateral_suggestions.insert(tk.END, string)
             n += 1
@@ -276,7 +273,7 @@ class Game:
 
     def _end_game(self):
         def end_button():
-            self.parent.destroy()
+            self.win.destroy()
 
         self.win = tk.Toplevel(bg="#FFFFFF")
         self.win.wm_title("Xeque-mate")
