@@ -43,11 +43,13 @@ class RedBlackTree:
         self.root = None
     
     def inOrder(self, node = None):
+        result = []
         node = self.root if node is None else node
         if node != self.NIL_LEAF:
-            self.inOrder(node.left)
-            print(node)
-            self.inOrder(node.right)
+            result += self.inOrder(node.left)
+            result += [str(node) + ', color: ' + str(node.color)]
+            result += self.inOrder(node.right)
+        return result
 
     # Adição normal de uma Árvore Binária
     def add(self, value, data):
