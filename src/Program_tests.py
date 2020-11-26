@@ -1,9 +1,114 @@
 import unittest
 from estruturasDeDados import PilhaEncadeada as Pilha
 from estruturasDeDados import ListaDuplamenteEncadeada as Lista
+from estruturasDeDados import ArvoreRedBlack as Arvore
 
 class ArvoreRedBlackTests(unittest.TestCase):
-    pass
+    def setUp(self):
+        self.arvore = Arvore.RedBlackTree()
+
+    def test_adding_root_tree(self):
+        '''
+        (10B [data])
+        '''
+        
+        self.arvore.add(10, 'data')
+        self.assertEqual(self.arvore.inOrder()[0], '10: data, color: BLACK', 'Valor não corresponde com o esperado.')
+
+    def test_adding_element_parent_black_tree(self):
+        '''
+        (10B [data]) ____
+                         (16R [data])
+        '''
+
+        self.arvore.add(10, 'data')
+        self.arvore.add(16, 'data1')
+        self.assertEqual(self.arvore.inOrder()[0], '10: data, color: BLACK', 'Valor não corresponde com o esperado.')
+        self.assertEqual(self.arvore.inOrder()[1], '16: data1, color: RED', 'Valor não corresponde com o esperado.')
+
+    def test_adding_element_parent_uncle_red_tree(self):
+        '''
+        (8R [data])
+        Novo Elemento
+                                 __ (10B [data]) __
+                      (9R [data])                  (16R [data])
+
+
+                                 __ (10B [data]) __
+                   __ (9B [data])                  (16B [data])
+        (8R [data])
+
+        '''
+
+        self.arvore.add(10, 'data')
+        self.arvore.add(9, 'data1')
+        self.arvore.add(16, 'data2')
+        self.arvore.add(8, 'data3')
+        self.assertEqual(self.arvore.inOrder()[0], '8: data3, color: RED', 'Valor não corresponde com o esperado.')
+        self.assertEqual(self.arvore.inOrder()[1], '9: data1, color: BLACK', 'Valor não corresponde com o esperado.')
+        self.assertEqual(self.arvore.inOrder()[2], '10: data, color: BLACK', 'Valor não corresponde com o esperado.')
+        self.assertEqual(self.arvore.inOrder()[3], '16: data2, color: BLACK', 'Valor não corresponde com o esperado.')
+
+    # Esse teste serve tanto para esquerda como para direita (LL ou RR)
+    def test_adding_element_uncle_black_LL_rotation_tree(self):
+        '''
+        (9R [data])
+        Novo Elemento
+                                 ____ (10B [data]) ____
+                      (7B [data])__                    (20B [data])
+                                   (8R [data])
+
+
+                                 ____ (10B [data]) ____
+                   __ (8B [data])__                    (16B [data])
+        (7R [data])                (9R [data])
+
+        '''
+
+        self.arvore.add(10, 'data')
+        self.arvore.add(7, 'data1')
+        self.arvore.add(20, 'data2')
+        self.arvore.add(8, 'data3')
+        self.arvore.add(9, 'data4')
+        self.assertEqual(self.arvore.inOrder()[0], '7: data1, color: RED', 'Valor não corresponde com o esperado.')
+        self.assertEqual(self.arvore.inOrder()[1], '8: data3, color: BLACK', 'Valor não corresponde com o esperado.')
+        self.assertEqual(self.arvore.inOrder()[2], '9: data4, color: RED', 'Valor não corresponde com o esperado.')
+        self.assertEqual(self.arvore.inOrder()[3], '10: data, color: BLACK', 'Valor não corresponde com o esperado.')
+        self.assertEqual(self.arvore.inOrder()[4], '20: data2, color: BLACK', 'Valor não corresponde com o esperado.')
+
+    # Esse teste server tanto para esquerda ou direita (LR ou RL)
+    def test_adding_element_uncle_black_LR_rotation_tree(self):
+        '''
+        (17R [data])
+        Novo Elemento
+                                 ______ (10B [data]) ______
+                      (5B [data])__                        (20B [data])
+                                   (7R [data])  (15R [data])
+
+
+                                 _______________(10B [data]) _______________
+                      (5B [data])__                                       __(20B [data])
+                                   (7R [data])               _(17R [data])
+                                                 (15R [data])
+
+                                                 
+                                 ____________(10B [data]) ____________
+                      (5B [data])__                                 __(17B [data])__
+                                   (7R [data])          (15R [data])                (20R [data])
+        '''
+
+        self.arvore.add(10, 'data')
+        self.arvore.add(5, 'data1')
+        self.arvore.add(20, 'data2')
+        self.arvore.add(7, 'data3')
+        self.arvore.add(15, 'data4')
+        self.arvore.add(17, 'data5')
+        self.assertEqual(self.arvore.inOrder()[0], '5: data1, color: BLACK', 'Valor não corresponde com o esperado.')
+        self.assertEqual(self.arvore.inOrder()[1], '7: data3, color: RED', 'Valor não corresponde com o esperado.')
+        self.assertEqual(self.arvore.inOrder()[2], '10: data, color: BLACK', 'Valor não corresponde com o esperado.')
+        self.assertEqual(self.arvore.inOrder()[3], '15: data4, color: RED', 'Valor não corresponde com o esperado.')
+        self.assertEqual(self.arvore.inOrder()[4], '17: data5, color: BLACK', 'Valor não corresponde com o esperado.')
+        self.assertEqual(self.arvore.inOrder()[5], '20: data2, color: RED', 'Valor não corresponde com o esperado.')
 
 class ListaDuplamenteEncadeadaTests(unittest.TestCase):
     def setUp(self):
