@@ -224,8 +224,10 @@ class RedBlackTree:
 
         return node, node2, node3
 
-    def max(self, node):
+    def max(self, node=None):
         """ Retorna o no com o valor maximo na arvore """
+        if not node:
+            node = self.root
         # Encontra o no mais a direita
         while node.right != self.NIL_LEAF:
             node = node.right
@@ -270,8 +272,10 @@ class RedBlackTree:
 
         return node, node2, node3
 
-    def min(self, node):
+    def min(self, node=None):
         """ Retorna o no com o valor menor na arvore """
+        if not node:
+            node = self.root
         # Encontra o no mais a direita
         while node.left != self.NIL_LEAF:
             node = node.left

@@ -1,4 +1,6 @@
 import unittest
+import random as rd
+from estruturasDeDados import ArvoreRedBlack as Arvore
 from estruturasDeDados import PilhaEncadeada as Pilha
 from estruturasDeDados import ListaDuplamenteEncadeada as Lista
 from estruturasDeDados import ArvoreRedBlack as Arvore
@@ -109,6 +111,46 @@ class ArvoreRedBlackTests(unittest.TestCase):
         self.assertEqual(self.arvore.inOrder()[3], '15: data4, color: RED', 'Valor não corresponde com o esperado.')
         self.assertEqual(self.arvore.inOrder()[4], '17: data5, color: BLACK', 'Valor não corresponde com o esperado.')
         self.assertEqual(self.arvore.inOrder()[5], '20: data2, color: RED', 'Valor não corresponde com o esperado.')
+
+    def test_max_value_tree(self):
+        # Gerando arvore aleatória
+        teste_values = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+        rd.shuffle(teste_values)
+        for i in teste_values:
+            self.arvore.add(i, i)
+            
+        self.assertEqual(self.arvore.max().value, 10, 'Valor não corresponde com o esperado.')
+
+    def test_min_value_tree(self):
+        # Gerando arvore aleatória
+        teste_values = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+        rd.shuffle(teste_values)
+        for i in teste_values:
+            self.arvore.add(i, i)
+            
+        self.assertEqual(self.arvore.min().value, 0, 'Valor não corresponde com o esperado.')
+
+    def test_three_highest_values_tree(self):
+        # Gerando arvore aleatória
+        teste_values = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+        rd.shuffle(teste_values)
+        for i in teste_values:
+            self.arvore.add(i, i)
+        teste_tree = self.arvore.max3()
+        self.assertEqual(teste_tree[0].value, 10, 'Maior valor não corresponde com o esperado.')
+        self.assertEqual(teste_tree[1].value,  9, 'Segundo maior valor não corresponde com o esperado.')
+        self.assertEqual(teste_tree[2].value,  8, 'Terceiro maior valor não corresponde com o esperado.')
+
+    def test_three_lowest_values_tree(self):
+        # Gerando arvore aleatória
+        teste_values = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+        rd.shuffle(teste_values)
+        for i in teste_values:
+            self.arvore.add(i, i)
+        teste_tree = self.arvore.min3()
+        self.assertEqual(teste_tree[0].value, 0, 'Menor valor não corresponde com o esperado.')
+        self.assertEqual(teste_tree[1].value, 1, 'Segundo menor valor não corresponde com o esperado.')
+        self.assertEqual(teste_tree[2].value, 2, 'Terceiro menor valor não corresponde com o esperado.')
 
 class ListaDuplamenteEncadeadaTests(unittest.TestCase):
     def setUp(self):
